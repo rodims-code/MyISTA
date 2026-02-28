@@ -47,8 +47,8 @@
     </div>
     
     <div class="navbar-end gap-3">
-      <a href="/login" class="btn btn-ghost btn-sm hidden md:flex">Se connecter</a>
-      <a href="/register" class="btn btn-primary btn-sm shadow-md shadow-primary/30 px-6">Rejoindre</a>
+      <a href="/auth/login" class="btn btn-ghost btn-sm hidden md:flex">Se connecter</a>
+      <a href="/auth/register" class="btn btn-primary btn-sm shadow-md shadow-primary/30 px-6">Rejoindre</a>
     </div>
   </nav>
 
@@ -100,7 +100,7 @@
           <div class="max-w-xl">
             <h2 class="text-sm font-bold text-primary uppercase tracking-[0.2em] mb-4">L'Origine du Projet</h2>
             <h3 class="text-3xl md:text-4xl font-bold text-slate-900">Pourquoi MyISTA ?</h3>
-            <p class="text-slate-500 mt-4">Né d'un constat réel sur le campus, MyISTA répond aux difficultés quotidiennes de la vie estudiantine.</p>
+            <p class="text-slate-500 mt-4">Né d'un constat réel sur le campus, MyISTA répond aux difficultés quotidiennes de la vie des etudiants.</p>
           </div>
         </div>
 
