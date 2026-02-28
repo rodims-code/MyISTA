@@ -1,55 +1,66 @@
 // place files you want to import through the `$lib` alias in this folder.
 import axios from "axios";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "./constants";
+// 1. On utilise l'import officiel de SvelteKit pour les variables d'env
+import { PUBLIC_API_URL } from '$env/static/public'; 
+import { browser } from '$app/environment';
+import { goto } from '$app/navigation';
 
 const api = axios.create({
-  baseURL: process.env.VITE_API_URL,
+    // Utilise la variable importée ci-dessus
+    baseURL: PUBLIC_API_URL, 
 });
 
-// Intercepteur requête → ajoute le token
+// Intercepteur requête
 api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem(ACCESS_TOKEN);
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
+    (config) => {
+        // On vérifie qu'on est dans le navigateur avant de toucher au localStorage
+        if (browser) {
+            const token = localStorage.getItem(ACCESS_TOKEN);
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
+        }
+        return config;
+    },
+    (error) => Promise.reject(error)
 );
 
-// Intercepteur réponse → gère le refresh
+// Intercepteur réponse
 api.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
+    (response) => response,
+    async (error) => {
+        const originalRequest = error.config;
 
-    if (error.response?.status === 401 || error.response?.status === 403) {
-      try {
-        const refresh = localStorage.getItem(REFRESH_TOKEN);
-        if (refresh) {
-          // Demande un nouveau access
-          const res = await axios.post(
-            `${process.env.NEXT_PUBLIC_API_URL}api/token/refresh/`,
-            { refresh }
-          );
+        // Éviter une boucle infinie si le refresh lui-même échoue (401)
+        if (error.response?.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
 
-          localStorage.setItem(ACCESS_TOKEN, res.data.access);
+            try {
+                const refresh = localStorage.getItem(REFRESH_TOKEN);
+                if (refresh) {
+                    // On utilise la baseURL configurée plus haut
+                    const res = await axios.post(`${PUBLIC_API_URL}api/token/refresh/`, { 
+                        refresh 
+                    });
 
-          // Met à jour le header et rejoue la requête
-          originalRequest.headers.Authorization = `Bearer ${res.data.access}`;
-          return api(originalRequest);
+                    const newAccessToken = res.data.access;
+                    localStorage.setItem(ACCESS_TOKEN, newAccessToken);
+
+                    originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+                    return api(originalRequest);
+                }
+            } catch (err) {
+                localStorage.removeItem(ACCESS_TOKEN);
+                localStorage.removeItem(REFRESH_TOKEN);
+                
+                if (browser) {
+                    goto('/auth/login'); // Utilisation de goto au lieu de window.location
+                }
+            }
         }
-      } catch (err) {
-        // Refresh invalide → déconnexion
-        localStorage.removeItem(ACCESS_TOKEN);
-        localStorage.removeItem(REFRESH_TOKEN);
-        window.location.href = "/auth/login";
-      }
+        return Promise.reject(error);
     }
-
-    return Promise.reject(error);
-  }
 );
 
 export default api;
