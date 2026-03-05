@@ -59,7 +59,7 @@
     <div class="card bg-base-100 shadow-2xl border border-base-200">
       <div class="card-body p-8 gap-6">
 
-        <div>
+        <div class="text-center">
           <h2 class="text-xl font-bold text-base-content">Connexion</h2>
           <p class="text-base-content/50 text-sm mt-1">Entrez vos identifiants pour accéder à votre espace.</p>
         </div>
@@ -79,7 +79,7 @@
             <div class="label pb-1">
               <span class="label-text font-medium">Nom d'utilisateur</span>
             </div>
-            <label class="input input-bordered flex items-center gap-3 focus-within:input-primary transition-colors">
+            <label class="input input-bordered w-full flex items-center gap-3 focus-within:input-primary transition-colors">
               <User size={16} class="text-base-content/40 shrink-0" />
               <input
                 type="text"
@@ -97,7 +97,7 @@
             <div class="label pb-1">
               <span class="label-text font-medium">Mot de passe</span>
             </div>
-            <label class="input input-bordered flex items-center gap-3 focus-within:input-primary transition-colors">
+            <label class="input input-bordered flex w-full items-center gap-3 focus-within:input-primary transition-colors">
               <Lock size={16} class="text-base-content/40 shrink-0" />
               <input
                 type="password"
@@ -125,12 +125,13 @@
           </button>
 
         </form>
-
+        <div class="divider text-xs text-base-content/30">OU</div>
+        <a href="/auth/register" class="btn btn-ghost btn-sm no-underline font-normal">Vous n'avez pas de compte ? <span>Creez un compte </span></a>
       </div>
     </div>
 
     <p class="text-center text-xs text-base-content/40 mt-6">
-      © 2026 MyISTA — Développé pour l'ISTA
+      © 2026 MyISTA — Développé par un étudiant de l'ISTA pour l'ISTA
     </p>
   </div>
 </div>

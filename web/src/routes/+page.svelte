@@ -75,7 +75,7 @@
 				>
 					<span class="flex h-2 w-2 rounded-full bg-primary"></span>
 					<span class="text-xs font-bold tracking-wider text-primary uppercase"
-						>Développé par un étudiant de l'ISTA</span
+						>Développé par un étudiant de l'ISTA pour l'ISTA</span
 					>
 				</div>
 
@@ -88,7 +88,7 @@
 				</h1>
 
 				<p class="mx-auto mb-12 max-w-2xl text-lg leading-relaxed text-slate-600 md:text-xl">
-					MyISTA centralise l'écosystème de l'institut pour offrir aux étudiants une navigation
+					MyISTA est un projet open source qui centralise l'écosystème de l'institut pour offrir aux étudiants une navigation
 					fluide, sécurisée et structurée au sein du campus.
 				</p>
 

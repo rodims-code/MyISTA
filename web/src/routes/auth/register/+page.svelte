@@ -65,7 +65,7 @@
     <div class="card bg-base-100 shadow-2xl border border-base-200">
       <div class="card-body p-8 gap-6">
 
-        <div>
+        <div class="text-center">
           <h2 class="text-xl font-bold text-base-content">Inscription</h2>
           <p class="text-base-content/50 text-sm mt-1">Remplissez les informations pour rejoindre la plateforme.</p>
         </div>
@@ -83,7 +83,7 @@
             <div class="label pb-1">
               <span class="label-text font-medium">Nom d'utilisateur</span>
             </div>
-            <label class="input input-bordered flex items-center gap-3 focus-within:input-secondary transition-colors">
+            <label class="input input-bordered flex w-full items-center gap-3 focus-within:input-secondary transition-colors">
               <User size={16} class="text-base-content/40 shrink-0" />
               <input
                 type="text"
@@ -99,7 +99,7 @@
             <div class="label pb-1">
               <span class="label-text font-medium">Mot de passe</span>
             </div>
-            <label class="input input-bordered flex items-center gap-3 focus-within:input-secondary transition-colors">
+            <label class="input input-bordered flex w-full items-center gap-3 focus-within:input-secondary transition-colors">
               <Lock size={16} class="text-base-content/40 shrink-0" />
               <input
                 type="password"
@@ -115,7 +115,7 @@
             <div class="label pb-1">
               <span class="label-text font-medium">Confirmer le mot de passe</span>
             </div>
-            <label class="input input-bordered flex items-center gap-3 focus-within:input-secondary transition-colors">
+            <label class="input input-bordered flex w-full items-center gap-3 focus-within:input-secondary transition-colors">
               <Lock size={16} class="text-base-content/40 shrink-0" />
               <input
                 type="password"

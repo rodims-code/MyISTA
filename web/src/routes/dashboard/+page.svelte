@@ -1,5 +1,6 @@
 <script lang="ts">
   import { LayoutGrid, Users, DoorOpen, FileText, TrendingUp, BookOpen, Clock } from 'lucide-svelte';
+  //import  fetchCurrentUser from "$lib/userApi"
 
   const stats = [
     { label: 'Étudiants',  value: '342',  sub: '+12 ce mois',     Icon: Users,      color: 'text-primary',   bg: 'bg-primary/10'   },
