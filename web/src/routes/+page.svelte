@@ -10,7 +10,8 @@
 		ChevronRight,
 		GraduationCap,
 		Lightbulb,
-		Target
+		Target,
+		Github
 	} from 'lucide-svelte';
 	import { onMount } from 'svelte';
 
@@ -81,15 +82,14 @@
 
 				<h1 class="mb-8 text-5xl leading-[1.1] font-extrabold text-slate-900 md:text-7xl">
 					Une plateforme académique <br />
-					<span
-						class="bg-gradient-to-r from-primary to-blue-500 bg-clip-text text-transparent italic"
+					<span class="bg-linear-to-r from-primary to-blue-500 bg-clip-text text-transparent italic"
 						>intelligente et évolutive.</span
 					>
 				</h1>
 
 				<p class="mx-auto mb-12 max-w-2xl text-lg leading-relaxed text-slate-600 md:text-xl">
-					MyISTA est un projet open source qui centralise l'écosystème de l'institut pour offrir aux étudiants une navigation
-					fluide, sécurisée et structurée au sein du campus.
+					MyISTA est un projet open source qui centralise l'écosystème de l'institut pour offrir aux
+					étudiants une navigation fluide, sécurisée et structurée au sein du campus.
 				</p>
 
 				<div class="flex flex-wrap justify-center gap-4">
@@ -99,11 +99,20 @@
 							class="ml-2 transition-transform group-hover:translate-x-1"
 						/>
 					</button>
+
 					<button
 						class="btn border-slate-200 px-10 btn-outline btn-lg hover:bg-slate-50 hover:text-primary"
 					>
 						Découvrir le projet
 					</button>
+					<a
+						href="https://github.com/yourusername/myista"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="btn rounded-full border-slate-200 px-10 btn-outline btn-lg hover:bg-slate-50 hover:text-primary"
+					>
+						<Github />
+					</a>
 				</div>
 			</div>
 
