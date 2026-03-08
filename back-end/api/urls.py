@@ -2,7 +2,16 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("notes/", views.NoteListCreate.as_view(), name="note-list"),
-    path("notes/delete/<int:pk>/", views.NoteDelete.as_view(), name="delete-note"),
-    path("user/me/", views.CurrentUserView.as_view(), name="curent-user-connected")
+    path("user/register/", views.CreateUserView.as_view(), name="register"),
+    path("user/me/", views.CurrentUserView.as_view(), name="current-user"),
+    path("batiments/", views.BatimentListCreate.as_view(), name="batiment-list"),
+    path("batiments/<int:pk>/", views.BatimentDetail.as_view(), name="batiment-detail"),
+    path("salles/", views.SalleListCreate.as_view(), name="salle-list"),
+    path("salles/<int:pk>/", views.SalleDetail.as_view(), name="salle-detail"),
+    path("affectations/", views.AffectationSalleListCreate.as_view(), name="affectation-list"),
+    path("affectations/<int:pk>/", views.AffectationSalleDetail.as_view(), name="affectation-detail"),
+    path("infos/", views.InfosEssentiellesListCreate.as_view(), name="infos-list"),
+    path("infos/<int:pk>/", views.InfosEssentiellesDetail.as_view(), name="infos-detail"),
+    path("documents/", views.DocumentListCreate.as_view(), name="document-list"),
+    path("documents/<int:pk>/", views.DocumentDetail.as_view(), name="document-detail"),
 ]
