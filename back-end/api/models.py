@@ -55,6 +55,17 @@ class Niveau(models.Model):
 # -------------------------
 
 class User(AbstractBaseUser, PermissionsMixin):
+    ROLE_CHOICES = (
+    ("student", "Student"),
+    ("delegate", "Delegate"),
+    ("admin", "Admin"),
+    )
+
+    role = models.CharField(
+        max_length=20,
+        choices=ROLE_CHOICES,
+        default="student"
+    )
 
     matricule = models.CharField(max_length=100, unique=True)
     username = models.CharField(max_length=100)
@@ -71,11 +82,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         on_delete=models.SET_NULL,
         null=True,
         blank=True
-    )
-
-    role = models.CharField(
-        max_length=20,
-        default="student"
     )
 
     date_inscription = models.DateTimeField(auto_now_add=True)
