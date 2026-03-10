@@ -124,7 +124,7 @@
 							<input
 								type="text"
 								class="input-bordered input"
-								value={userData.filiere || 'Non défini'}
+								value={userData.filiere.nom || 'Non défini'}
 								disabled
 							/>
 						</div>
