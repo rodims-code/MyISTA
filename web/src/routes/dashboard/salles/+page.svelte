@@ -1,21 +1,39 @@
 <script lang="ts">
-	import { DoorOpen, Search } from 'lucide-svelte';
+	import { DoorOpen, Search, Loader2 } from 'lucide-svelte';
+	import { onMount } from 'svelte';
+	import api from '$lib/index';
+	import { ACCESS_TOKEN } from '$lib/constants';
+	import { fetchCurrentSalle, fetchCurrentBatiments } from '$lib/userApi';
 
-	const salles = [
-		{ id: 'A-101', type: 'Cours', capacite: 30, statut: 'Disponible', niveau: 1 },
-		{ id: 'A-102', type: 'Cours', capacite: 30, statut: 'Occupée', niveau: 1 },
-		{ id: 'B-201', type: 'TD', capacite: 20, statut: 'Disponible', niveau: 2 },
-		{ id: 'B-204', type: 'TP', capacite: 15, statut: 'Occupée', niveau: 2 },
-		{ id: 'C-301', type: 'Cours', capacite: 40, statut: 'Disponible', niveau: 3 },
-		{ id: 'C-305', type: 'TD', capacite: 20, statut: 'Disponible', niveau: 3 }
-	];
-
+	let salles = $state<any[]>([]);
+	let batiments = $state<any[]>([]);
+	let loading = $state(true);
 	let search = $state('');
+
+	onMount(async () => {
+		try {
+			const [sallesRes, batimentsRes] = await Promise.all([
+				fetchCurrentSalle(),
+				fetchCurrentBatiments()
+			]);
+			salles = sallesRes.data;
+			batiments = batimentsRes.data;
+		} catch (error) {
+			console.error('Erreur lors du chargement des salles:', error);
+		} finally {
+			loading = false;
+		}
+	});
+
+	function getBatimentNom(id: number) {
+		return batiments.find((b) => b.id === id)?.nom || 'Inconnu';
+	}
+
 	const filtered = $derived(
 		salles.filter(
 			(s) =>
-				s.id.toLowerCase().includes(search.toLowerCase()) ||
-				s.type.toLowerCase().includes(search.toLowerCase())
+				s.nom.toLowerCase().includes(search.toLowerCase()) ||
+				getBatimentNom(s.batiment).toLowerCase().includes(search.toLowerCase())
 		)
 	);
 </script>
@@ -41,41 +59,37 @@
 			<thead class="bg-base-200 text-xs tracking-wide text-base-content/70 uppercase">
 				<tr>
 					<th>Salle</th>
-					<th>Type</th>
-					<th>Capacité</th>
-					<th>Niveau</th>
-					<th>Statut</th>
+					<th>Bâtiment</th>
+					<th class="text-right">Actions</th>
 				</tr>
 			</thead>
 			<tbody>
-				{#each filtered as salle}
-					<tr class="hover:bg-base-50 border-base-200">
-						<td class="font-mono font-bold text-primary">{salle.id}</td>
-						<td><span class="badge badge-ghost badge-sm">{salle.type}</span></td>
-						<td>{salle.capacite} places</td>
-						<td>Niveau {salle.niveau}</td>
-						<td>
-							{#if salle.statut === 'Disponible'}
-								<span class="badge gap-1 badge-sm badge-success">
-									<span class="h-1.5 w-1.5 rounded-full bg-current"></span>
-									{salle.statut}
-								</span>
-							{:else}
-								<span class="badge gap-1 badge-sm badge-error">
-									<span class="h-1.5 w-1.5 rounded-full bg-current"></span>
-									{salle.statut}
-								</span>
-							{/if}
+				{#if loading}
+					<tr>
+						<td colspan="3" class="py-10 text-center">
+							<Loader2 size={24} class="mx-auto animate-spin text-primary" />
 						</td>
 					</tr>
 				{:else}
-					<tr>
-						<td colspan="5" class="text-center py-10 text-base-content/40">
-							<DoorOpen size={28} class="mx-auto mb-2 opacity-30" />
-							Aucune salle trouvée
-						</td>
-					</tr>
-				{/each}
+					{#each filtered as salle}
+						<tr class="hover:bg-base-50 border-base-200">
+							<td class="font-mono font-bold text-primary">{salle.nom}</td>
+							<td>
+								<span class="badge badge-ghost badge-sm">{getBatimentNom(salle.batiment)}</span>
+							</td>
+							<td class="text-right">
+								<button class="btn btn-ghost btn-xs">Détails</button>
+							</td>
+						</tr>
+					{:else}
+						<tr>
+							<td colspan="3" class="text-center py-10 text-base-content/40">
+								<DoorOpen size={28} class="mx-auto mb-2 opacity-30" />
+								Aucune salle trouvée
+							</td>
+						</tr>
+					{/each}
+				{/if}
 			</tbody>
 		</table>
 	</div>

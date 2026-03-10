@@ -1,158 +1,251 @@
-<h1>Register</h1><script lang="ts">
-  import { goto } from '$app/navigation';
-  import api from '$lib/index';
-  import { GraduationCap, User, Lock, AlertCircle, Loader2, UserPlus } from 'lucide-svelte';
+<script lang="ts">
+	import { goto } from '$app/navigation';
+	import api from '$lib/index';
+	import {
+		GraduationCap,
+		User,
+		Lock,
+		IdCard,
+		Briefcase,
+		Layers,
+		AlertCircle,
+		Loader2
+	} from 'lucide-svelte';
 
-  let username = $state('');
-  let password = $state('');
-  let confirmPassword = $state('');
-  let loading = $state(false);
-  let error = $state('');
+	let matricule = $state('');
+	let username = $state('');
+	let password = $state('');
+	let filiere = $state<number | null>(null);
+	let niveau = $state<number | null>(null);
+	let loading = $state(false);
+	let error = $state('');
 
-  async function handleRegister(e: SubmitEvent) {
-    e.preventDefault();
-    loading = true;
-    error = '';
+	// Filieres and Niveaux placeholders (since there are no GET endpoints yet)
+	const filieres = [
+		{ id: 1, nom: 'G' },
+//		{ id: 2, nom: 'TCE (Commerce)' },
+//		{ id: 3, nom: 'GE (Gestion)' }
+	];
+	const niveaux = [
+		{ id: 1, nom: 'Preparatoire' },
+//		{ id: 2, nom: 'Licence 1' },
+//		{ id: 3, nom: 'Licence 2' },
+//		{ id: 4, nom: 'Licence 3' }
+	];
 
-    // Vérification locale du mot de passe
-    if (password !== confirmPassword) {
-      error = "Les mots de passe ne correspondent pas.";
-      loading = false;
-      return;
-    }
+	async function handleRegister(e: SubmitEvent) {
+		e.preventDefault();
+		loading = true;
+		error = '';
 
-    try {
-      // Ajuste l'URL '/api/user/register/' selon ton backend Django
-      await api.post('/api/user/register/', { username, password });
-      
-      // Après inscription, on redirige vers le login
-      // Optionnel : tu peux aussi connecter l'utilisateur directement ici
-      goto('/auth/login?registered=true');
-    } catch (err: any) {
-      if (err.response?.status === 400) {
-        error = "Ce nom d'utilisateur est déjà utilisé.";
-      } else {
-        error = "Une erreur est survenue lors de l'inscription.";
-      }
-    } finally {
-      loading = false;
-    }
-  }
+		try {
+			await api.post('/api/user/register/', {
+				matricule,
+				username,
+				password,
+				filiere,
+				niveau,
+				role: 'student'
+			});
+			// After registration, redirect to login
+			goto('/auth/login?registered=success');
+		} catch (err: any) {
+			if (err.response?.data) {
+				// Concatenate backend errors if any
+				const data = err.response.data;
+				error = Object.entries(data)
+					.map(([key, val]) => `${key}: ${val}`)
+					.join(' | ');
+			} else {
+				error = 'Une erreur est survenue lors de la création du compte.';
+			}
+		} finally {
+			loading = false;
+		}
+	}
 </script>
 
 <svelte:head>
-  <title>Inscription — MyISTA</title>
+	<title>Inscription — MyISTA</title>
 </svelte:head>
 
-<div class="min-h-screen bg-gradient-to-br from-base-200 via-base-100 to-base-200 flex items-center justify-center px-4">
+<div
+	class="flex min-h-screen items-center justify-center bg-gradient-to-br from-base-200 via-base-100 to-base-200 px-4 py-12"
+>
+	<!-- Blobs décoratifs -->
+	<div class="pointer-events-none fixed inset-0 overflow-hidden">
+		<div
+			class="absolute -top-[15%] -left-[10%] h-[45%] w-[45%] rounded-full bg-primary/10 blur-[140px]"
+		></div>
+		<div
+			class="absolute -right-[10%] -bottom-[10%] h-[40%] w-[40%] rounded-full bg-secondary/10 blur-[120px]"
+		></div>
+	</div>
 
-  <div class="fixed inset-0 overflow-hidden pointer-events-none">
-    <div class="absolute -top-[15%] -left-[10%] w-[45%] h-[45%] bg-secondary/10 blur-[140px] rounded-full"></div>
-    <div class="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-primary/10 blur-[120px] rounded-full"></div>
-  </div>
+	<div class="relative z-10 w-full max-w-xl">
+		<!-- Logo -->
+		<div class="mb-8 text-center">
+			<div
+				class="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary shadow-lg shadow-primary/30"
+			>
+				<GraduationCap size={36} class="text-primary-content" />
+			</div>
+			<h1 class="text-3xl font-extrabold tracking-tight text-base-content">
+				My<span class="text-primary">ISTA</span>
+			</h1>
+			<p class="mt-1 text-sm text-base-content/50">Plateforme académique de l'ISTA</p>
+		</div>
 
-  <div class="relative z-10 w-full max-w-md">
-    <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-16 h-16 bg-secondary rounded-2xl shadow-lg shadow-secondary/30 mb-4">
-        <UserPlus size={36} class="text-secondary-content" />
-      </div>
-      <h1 class="text-3xl font-extrabold tracking-tight text-base-content">
-        My<span class="text-primary">ISTA</span>
-      </h1>
-      <p class="text-base-content/50 mt-1 text-sm">Créez votre compte académique</p>
-    </div>
+		<!-- Card -->
+		<div class="card border border-base-200 bg-base-100 shadow-2xl">
+			<div class="card-body gap-6 p-8">
+				<div class="text-center">
+					<h2 class="text-xl font-bold text-base-content">Création de compte</h2>
+					<p class="mt-1 text-sm text-base-content/50">
+						Rejoignez la communauté MyISTA dès aujourd'hui.
+					</p>
+				</div>
 
-    <div class="card bg-base-100 shadow-2xl border border-base-200">
-      <div class="card-body p-8 gap-6">
+				<!-- Erreur -->
+				{#if error}
+					<div class="alert px-4 py-3 text-sm alert-error">
+						<AlertCircle size={16} />
+						<span>{error}</span>
+					</div>
+				{/if}
 
-        <div class="text-center">
-          <h2 class="text-xl font-bold text-base-content">Inscription</h2>
-          <p class="text-base-content/50 text-sm mt-1">Remplissez les informations pour rejoindre la plateforme.</p>
-        </div>
+				<form onsubmit={handleRegister} class="flex flex-col gap-5">
+					<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+						<!-- Matricule -->
+						<label class="form-control w-full">
+							<div class="label pb-1">
+								<span class="label-text font-medium">Matricule</span>
+							</div>
+							<label
+								class="input-bordered input flex w-full items-center gap-3 transition-colors focus-within:input-primary"
+							>
+								<IdCard size={16} class="shrink-0 text-base-content/40" />
+								<input
+									type="text"
+									placeholder="ex: 123456789"
+									class="min-w-0 grow"
+									bind:value={matricule}
+									required
+								/>
+							</label>
+						</label>
 
-        {#if error}
-          <div class="alert alert-error text-sm py-3 px-4">
-            <AlertCircle size={16} />
-            <span>{error}</span>
-          </div>
-        {/if}
+						<!-- Username -->
+						<label class="form-control w-full">
+							<div class="label pb-1">
+								<span class="label-text font-medium">Nom d'utilisateur</span>
+							</div>
+							<label
+								class="input-bordered input flex w-full items-center gap-3 transition-colors focus-within:input-primary"
+							>
+								<User size={16} class="shrink-0 text-base-content/40" />
+								<input
+									type="text"
+									placeholder="ex: ahmed.bennani"
+									class="min-w-0 grow"
+									bind:value={username}
+									required
+								/>
+							</label>
+						</label>
+					</div>
 
-        <form onsubmit={handleRegister} class="flex flex-col gap-4">
+					<!-- Password -->
+					<label class="form-control w-full">
+						<div class="label pb-1">
+							<span class="label-text font-medium">Mot de passe</span>
+						</div>
+						<label
+							class="input-bordered input flex w-full items-center gap-3 transition-colors focus-within:input-primary"
+						>
+							<Lock size={16} class="shrink-0 text-base-content/40" />
+							<input
+								type="password"
+								placeholder="••••••••"
+								class="min-w-0 grow"
+								bind:value={password}
+								required
+							/>
+						</label>
+					</label>
 
-          <label class="form-control w-full">
-            <div class="label pb-1">
-              <span class="label-text font-medium">Nom d'utilisateur</span>
-            </div>
-            <label class="input input-bordered flex w-full items-center gap-3 focus-within:input-secondary transition-colors">
-              <User size={16} class="text-base-content/40 shrink-0" />
-              <input
-                type="text"
-                placeholder="ex: ahmed_24"
-                class="grow min-w-0"
-                bind:value={username}
-                required
-              />
-            </label>
-          </label>
+					<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+						<!-- Filiere -->
+						<label class="form-control w-full">
+							<div class="label pb-1">
+								<span class="label-text font-medium">Filière</span>
+							</div>
+							<div class="relative">
+								<select
+									class="select-bordered select w-full pl-10 focus:select-primary"
+									bind:value={filiere}
+									required
+								>
+									<option value={null} disabled selected>Choisir une filière</option>
+									{#each filieres as f}
+										<option value={f.id}>{f.nom}</option>
+									{/each}
+								</select>
+								<Briefcase
+									size={16}
+									class="absolute top-1/2 left-3 -translate-y-1/2 text-base-content/40"
+								/>
+							</div>
+						</label>
 
-          <label class="form-control w-full">
-            <div class="label pb-1">
-              <span class="label-text font-medium">Mot de passe</span>
-            </div>
-            <label class="input input-bordered flex w-full items-center gap-3 focus-within:input-secondary transition-colors">
-              <Lock size={16} class="text-base-content/40 shrink-0" />
-              <input
-                type="password"
-                placeholder="••••••••"
-                class="grow min-w-0"
-                bind:value={password}
-                required
-              />
-            </label>
-          </label>
+						<!-- Niveau -->
+						<label class="form-control w-full">
+							<div class="label pb-1">
+								<span class="label-text font-medium">Niveau</span>
+							</div>
+							<div class="relative">
+								<select
+									class="select-bordered select w-full pl-10 focus:select-primary"
+									bind:value={niveau}
+									required
+								>
+									<option value={null} disabled selected>Choisir un niveau</option>
+									{#each niveaux as n}
+										<option value={n.id}>{n.nom}</option>
+									{/each}
+								</select>
+								<Layers
+									size={16}
+									class="absolute top-1/2 left-3 -translate-y-1/2 text-base-content/40"
+								/>
+							</div>
+						</label>
+					</div>
 
-          <label class="form-control w-full">
-            <div class="label pb-1">
-              <span class="label-text font-medium">Confirmer le mot de passe</span>
-            </div>
-            <label class="input input-bordered flex w-full items-center gap-3 focus-within:input-secondary transition-colors">
-              <Lock size={16} class="text-base-content/40 shrink-0" />
-              <input
-                type="password"
-                placeholder="••••••••"
-                class="grow min-w-0"
-                bind:value={confirmPassword}
-                required
-              />
-            </label>
-          </label>
+					<!-- Submit -->
+					<button
+						type="submit"
+						class="btn mt-2 w-full shadow-lg shadow-primary/20 btn-primary"
+						disabled={loading}
+					>
+						{#if loading}
+							<Loader2 size={18} class="animate-spin" />
+							Création en cours...
+						{:else}
+							Créer mon compte
+						{/if}
+					</button>
+				</form>
 
-          <button
-            type="submit"
-            class="btn btn-secondary w-full mt-2 shadow-lg shadow-secondary/20"
-            disabled={loading}
-          >
-            {#if loading}
-              <Loader2 size={18} class="animate-spin" />
-              Création du compte...
-            {:else}
-              S'inscrire
-            {/if}
-          </button>
+				<div class="divider text-xs text-base-content/30">DÉJÀ INSCRIT ?</div>
+				<a href="/auth/login" class="btn font-normal no-underline btn-ghost btn-sm">
+					Retour à la page de connexion
+				</a>
+			</div>
+		</div>
 
-          <div class="divider text-xs text-base-content/30">OU</div>
-
-          <a href="/auth/login" class="btn btn-ghost btn-sm no-underline font-normal">
-            Déjà un compte ? Se connecter
-          </a>
-
-        </form>
-
-      </div>
-    </div>
-
-    <p class="text-center text-xs text-base-content/40 mt-6">
-      © 2026 MyISTA — Plateforme Étudiante
-    </p>
-  </div>
+		<p class="mt-6 text-center text-xs text-base-content/40">
+			© 2026 MyISTA — Développé par un étudiant de l'ISTA pour l'ISTA
+		</p>
+	</div>
 </div>

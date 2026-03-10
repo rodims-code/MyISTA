@@ -15,7 +15,9 @@
     LogOut,
     Menu,
     X,
-    ChevronRight
+    ChevronRight,
+    Info,
+    CalendarCheck
   } from 'lucide-svelte';
 
   let { children } = $props();
@@ -75,7 +77,9 @@
     { href: '/dashboard',           label: 'Tableau de bord', Icon: LayoutGrid },
     { href: '/dashboard/carte',     label: 'Carte du campus', Icon: Map         },
     { href: '/dashboard/salles',    label: 'Salles',           Icon: DoorOpen    },
+    { href: '/dashboard/affectations', label: 'Affectations',      Icon: CalendarCheck },
     { href: '/dashboard/documents', label: 'Documents',        Icon: FileText    },
+    { href: '/dashboard/infos',     label: 'Infos',            Icon: Info        },
     { href: '/dashboard/settings',  label: 'Paramètres',       Icon: Settings    },
   ];
 

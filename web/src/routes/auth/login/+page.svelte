@@ -4,7 +4,7 @@
   import { ACCESS_TOKEN, REFRESH_TOKEN } from '$lib/constants';
   import { GraduationCap, User, Lock, AlertCircle, Loader2 } from 'lucide-svelte';
 
-  let username = $state('');
+  let matricule = $state('');
   let password = $state('');
   let loading = $state(false);
   let error = $state('');
@@ -15,7 +15,7 @@
     error = '';
 
     try {
-      const res = await api.post('/api/token/', { username, password });
+      const res = await api.post('/api/token/', { matricule, password });
       localStorage.setItem(ACCESS_TOKEN, res.data.access);
       localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
       goto('/dashboard');
@@ -77,15 +77,15 @@
           <!-- Username -->
           <label class="form-control w-full">
             <div class="label pb-1">
-              <span class="label-text font-medium">Nom d'utilisateur</span>
+              <span class="label-text font-medium">Entrez votre matricule</span>
             </div>
             <label class="input input-bordered w-full flex items-center gap-3 focus-within:input-primary transition-colors">
               <User size={16} class="text-base-content/40 shrink-0" />
               <input
                 type="text"
-                placeholder="ex: ahmed.bennani"
+                placeholder="0000/2443"
                 class="grow min-w-0"
-                bind:value={username}
+                bind:value={matricule}
                 required
                 autocomplete="username"
               />

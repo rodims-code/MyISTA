@@ -36,25 +36,25 @@ class CurrentUserView(APIView):
 class BatimentListCreate(generics.ListCreateAPIView):
     queryset = Batiment.objects.all()
     serializer_class = BatimentSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 
 class BatimentDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Batiment.objects.all()
     serializer_class = BatimentSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 
 class SalleListCreate(generics.ListCreateAPIView):
     queryset = Salle.objects.all()
     serializer_class = SalleSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 
 class SalleDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Salle.objects.all()
     serializer_class = SalleSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 
 class AffectationSalleListCreate(generics.ListCreateAPIView):

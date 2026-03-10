@@ -70,19 +70,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     matricule = models.CharField(max_length=100, unique=True)
     username = models.CharField(max_length=100)
 
-    filiere = models.ForeignKey(
-        Filiere,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True
-    )
+    filiere = models.CharField(max_length=20, blank=True )
 
-    niveau = models.ForeignKey(
-        Niveau,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True
-    )
+    niveau = models.CharField(max_length=20, blank=True )
 
     date_inscription = models.DateTimeField(auto_now_add=True)
 

@@ -1,5 +1,45 @@
 <script lang="ts">
-	import { Settings, User, Save } from 'lucide-svelte';
+	import { Settings, User, Save, Loader2, CheckCircle2 } from 'lucide-svelte';
+	import { onMount } from 'svelte';
+	import api from '$lib/index';
+	import { ACCESS_TOKEN } from '$lib/constants';
+	import { fetchCurrentUser, updateCurrentUser } from '$lib/userApi';
+
+	let userData = $state<any>({});
+	let loading = $state(true);
+	let saving = $state(false);
+	let successMsg = $state('');
+	let errorMsg = $state('');
+
+	onMount(async () => {
+		try {
+			userData = await fetchCurrentUser();
+			if (!userData) {
+				errorMsg = 'Impossible de charger votre profil.';
+			}
+		} catch (err) {
+			console.error('Erreur chargement profil:', err);
+			errorMsg = 'Impossible de charger votre profil.';
+		} finally {
+			loading = false;
+		}
+	});
+
+	async function handleSave() {
+		saving = true;
+		successMsg = '';
+		errorMsg = '';
+		try {
+			const { matricule, date_inscription, role, ...updateData } = userData;
+			userData = await updateCurrentUser(updateData);
+			successMsg = 'Profil mis à jour avec succès !';
+			setTimeout(() => (successMsg = ''), 3000);
+		} catch (err) {
+			errorMsg = 'Une erreur est survenue lors de la sauvegarde.';
+		} finally {
+			saving = false;
+		}
+	}
 </script>
 
 <svelte:head>
@@ -15,46 +55,94 @@
 	</div>
 
 	<div class="flex flex-col gap-6 lg:flex-row">
-
-		<div class="card max-w-lg border border-base-200 bg-base-100 shadow-sm">
+		<div class="card w-full max-w-2xl border border-base-200 bg-base-100 shadow-sm">
 			<div class="card-body gap-5 p-6">
-				<div class="mb-2 flex items-center gap-3">
-					<div
-						class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary"
-					>
-						<User size={20} />
+				<div class="mb-2 flex items-center justify-between">
+					<div class="flex items-center gap-3">
+						<div
+							class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary"
+						>
+							<User size={20} />
+						</div>
+						<div>
+							<h3 class="text-sm font-bold text-base-content">Profil utilisateur</h3>
+							<p class="text-xs text-base-content/40">Informations de votre compte</p>
+						</div>
 					</div>
-					<div>
-						<h3 class="text-sm font-bold text-base-content">Profil utilisateur</h3>
-						<p class="text-xs text-base-content/40">Informations de votre compte</p>
+					{#if successMsg}
+						<div class="badge animate-bounce gap-2 badge-success">
+							<CheckCircle2 size={14} />
+							{successMsg}
+						</div>
+					{/if}
+				</div>
+
+				{#if loading}
+					<div class="flex justify-center py-10">
+						<Loader2 size={32} class="animate-spin text-primary" />
 					</div>
-				</div>
+				{:else}
+					<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+						<div class="form-control">
+							<label class="label pb-1"><span class="label-text font-medium">Matricule</span></label
+							>
+							<input type="text" class="input-bordered input" value={userData.matricule} disabled />
+							<label class="label"
+								><span class="label-text-alt text-base-content/40 italic">Non modifiable</span
+								></label
+							>
+						</div>
 
-				<div class="form-control">
-					<label class="label pb-1"
-						><span class="label-text font-medium">Nom d'utilisateur</span></label
-					>
-					<input type="text" class="input-bordered input" placeholder="Nom d'utilisateur" disabled />
-				</div>
+						<div class="form-control">
+							<label class="label pb-1"
+								><span class="label-text font-medium">Nom d'utilisateur</span></label
+							>
+							<input
+								type="text"
+								class="input-bordered input focus:input-primary"
+								bind:value={userData.username}
+							/>
+						</div>
 
-				<div class="form-control">
-					<label class="label pb-1"
-						><span class="label-text font-medium">Nouveau mot de passe</span></label
-					>
-					<input type="password" class="input-bordered input" placeholder="••••••••" />
-				</div>
+						<div class="form-control">
+							<label class="label pb-1"><span class="label-text font-medium">Rôle</span></label>
+							<input type="text" class="input-bordered input" value={userData.role} disabled />
+						</div>
 
-				<div class="form-control">
-					<label class="label pb-1"
-						><span class="label-text font-medium">Confirmer le mot de passe</span></label
-					>
-					<input type="password" class="input-bordered input" placeholder="••••••••" />
-				</div>
+						<div class="form-control">
+							<label class="label pb-1"><span class="label-text font-medium">Niveau</span></label>
+							<input
+								type="text"
+								class="input-bordered input"
+								value={userData.niveau || 'Non défini'}
+								disabled
+							/>
+						</div>
 
-				<button class="btn mt-2 gap-2 btn-primary">
-					<Save size={16} />
-					Sauvegarder
-				</button>
+						<div class="form-control col-span-full">
+							<label class="label pb-1"><span class="label-text font-medium">Filière</span></label>
+							<input
+								type="text"
+								class="input-bordered input"
+								value={userData.filiere || 'Non défini'}
+								disabled
+							/>
+						</div>
+					</div>
+
+					{#if errorMsg}
+						<div class="alert py-2 text-sm alert-error">{errorMsg}</div>
+					{/if}
+
+					<button class="btn mt-2 gap-2 btn-primary" onclick={handleSave} disabled={saving}>
+						{#if saving}
+							<Loader2 size={16} class="animate-spin" />
+						{:else}
+							<Save size={16} />
+						{/if}
+						Sauvegarder les modifications
+					</button>
+				{/if}
 			</div>
 		</div>
 
@@ -165,6 +253,5 @@
 				</div>
 			</div>
 		</div>
-
 	</div>
 </div>
