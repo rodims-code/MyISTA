@@ -115,10 +115,10 @@
 		/>
 
 		<!-- ── Page content ── -->
-		<div class="drawer-content flex h-full flex-col gap-4 lg:py-4 lg:pr-4">
+		<div class="drawer-content flex h-full flex-col gap-4 py-4 pr-4 pl-4 lg:pl-0">
 			<!-- Topbar -->
 			<header
-				class="navbar z-30 shrink-0 gap-2 border-base-200 bg-base-100 px-4 shadow-sm max-lg:border-b lg:rounded-full lg:border lg:border-base-200/50"
+				class="navbar z-30 shrink-0 gap-2 rounded-full border border-base-200/50 bg-base-100 px-4 shadow-sm"
 			>
 				<!-- Hamburger (mobile + desktop toggle) -->
 				<label
@@ -167,7 +167,7 @@
 
 			<!-- Main content -->
 			<main
-				class="flex-1 overflow-y-auto bg-base-100 p-4 shadow-sm md:p-6 lg:rounded-[2rem] lg:border lg:border-base-200/50 lg:p-8"
+				class="flex-1 overflow-y-auto rounded-[2rem] border border-base-200/50 bg-base-100 p-4 shadow-sm md:p-6"
 			>
 				{@render children()}
 			</main>
@@ -178,16 +178,16 @@
 			<!-- Overlay (mobile) -->
 			<label for="sidebar-drawer" aria-label="Fermer" class="drawer-overlay"></label>
 
-			<!-- Container padding pour Desktop -->
-			<div class="flex h-full flex-col lg:p-4">
+			<!-- Container padding pour Desktop et Mobile -->
+			<div class="flex h-full w-72 flex-col p-4 lg:w-auto">
 				<!--
           La sidebar change de largeur selon l'état :
           - is-drawer-close  → icon-only  (w-16 ou w-20 sur PC)
           - is-drawer-open   → expanded   (w-64)
         -->
 				<nav
-					class="flex h-full flex-col overflow-hidden border-base-200 bg-base-100 transition-all duration-300 max-lg:border-r lg:rounded-[2rem] lg:border lg:border-base-200/50 lg:shadow-sm
-                 {sidebarOpen ? 'is-drawer-open w-64' : 'is-drawer-close w-16 lg:w-20'}"
+					class="flex h-full flex-col overflow-hidden rounded-[2rem] border border-base-200/50 bg-base-100 shadow-sm transition-all duration-300
+                 {sidebarOpen ? 'is-drawer-open w-full lg:w-64' : 'is-drawer-close w-full lg:w-20'}"
 				>
 					<!-- Logo -->
 					<div class="flex min-h-[64px] items-center gap-3 border-b border-base-200 p-4">
