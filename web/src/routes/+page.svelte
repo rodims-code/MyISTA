@@ -35,7 +35,7 @@
 	</div>
 
 	<nav
-		class="navbar sticky top-0 z-50 border-b border-slate-200 bg-white/80 px-4 backdrop-blur-md md:px-12"
+		class="navbar sticky top-0 z-50 border-b border-slate-200 bg-white/80 px-4 backdrop-blur-md md:px-12 rounded-full"
 	>
 		<div class="navbar-start">
 			<div class="group flex cursor-pointer items-center gap-2">
@@ -125,10 +125,16 @@
 					></div>
 					<div class="absolute inset-0 flex items-center justify-center">
 						<div
-							class="flex flex-col items-center opacity-40 transition-opacity group-hover:opacity-100"
+							class="flex flex-col items-center opacity-40 transition-opacity group-hover:opacity-100 w-full"
 						>
-							<LayoutGrid size={64} class="mb-4 text-primary" />
-							<p class="font-mono text-sm tracking-widest uppercase">Dashboard Aperçu</p>
+<!-- 							<LayoutGrid size={64} class="mb-4 text-primary" />
+							<p class="font-mono text-sm tracking-widest uppercase">Dashboard Aperçu</p> -->
+							<!-- svelte-ignore a11y_img_redundant_alt -->
+							<img 
+							src="src/public/Screenshot 2026-03-14 193538.png" 
+							alt="Image not found" 
+							class="w-[95%] h-full rounded-xl"
+							>
 						</div>
 					</div>
 				</div>
