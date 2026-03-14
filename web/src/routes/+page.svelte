@@ -11,7 +11,10 @@
 		GraduationCap,
 		Lightbulb,
 		Target,
-		Github
+		Github,
+		MessageSquare,
+		Send,
+		Sparkles
 	} from 'lucide-svelte';
 	import { onMount } from 'svelte';
 
@@ -27,15 +30,18 @@
 >
 	<div class="pointer-events-none fixed inset-0 z-0 overflow-hidden">
 		<div
-			class="absolute -top-[10%] -left-[10%] h-[40%] w-[40%] animate-pulse rounded-full bg-primary/5 blur-[120px]"
+			class="absolute -top-[10%] -left-[10%] h-[50%] w-[50%] animate-pulse rounded-full bg-primary/20 blur-[120px]"
 		></div>
 		<div
-			class="absolute top-[20%] -right-[5%] h-[30%] w-[30%] rounded-full bg-blue-400/10 blur-[100px]"
+			class="absolute top-[20%] -right-[5%] h-[40%] w-[40%] animate-pulse rounded-full bg-blue-400/20 blur-[100px]"
+		></div>
+		<div
+			class="absolute bottom-[10%] left-[20%] h-[30%] w-[30%] animate-pulse rounded-full bg-indigo-500/10 blur-[120px]"
 		></div>
 	</div>
 
 	<nav
-		class="navbar sticky top-0 z-50 border-b border-slate-200 bg-white/80 px-4 backdrop-blur-md md:px-12 rounded-full"
+		class="navbar sticky top-0 z-50 rounded-full border-b border-slate-200 bg-white/80 px-4 backdrop-blur-md md:px-12"
 	>
 		<div class="navbar-start">
 			<div class="group flex cursor-pointer items-center gap-2">
@@ -55,12 +61,22 @@
 				<li><a href="#problemes" class="transition-colors hover:text-primary">Enjeux</a></li>
 				<li><a href="#solutions" class="transition-colors hover:text-primary">Solutions</a></li>
 				<li><a href="#pitch" class="transition-colors hover:text-primary">Institutionnel</a></li>
+				<li>
+					<a href="#feedback" class="animate-pulse transition-colors hover:text-primary">Feedback</a
+					>
+				</li>
 			</ul>
 		</div>
 
 		<div class="navbar-end gap-3">
-			<a href="/auth/login" class="btn hidden btn-ghost btn-sm md:flex">Se connecter</a>
-			<a href="/auth/register" class="btn px-6 shadow-md shadow-primary/30 btn-sm btn-primary"
+			<a
+				href="/auth/login"
+				class="btn hidden btn-ghost transition-all btn-sm hover:text-primary md:flex"
+				>Se connecter</a
+			>
+			<a
+				href="/auth/register"
+				class="btn px-6 shadow-lg shadow-primary/40 transition-all btn-sm btn-primary hover:scale-105 hover:shadow-primary/70"
 				>Rejoindre</a
 			>
 		</div>
@@ -82,7 +98,8 @@
 
 				<h1 class="mb-8 text-5xl leading-[1.1] font-extrabold text-slate-900 md:text-7xl">
 					Une plateforme académique <br />
-					<span class="bg-linear-to-r from-primary to-blue-500 bg-clip-text text-transparent italic"
+					<span
+						class="bg-linear-to-r from-primary to-blue-500 bg-clip-text text-transparent italic drop-shadow-[0_0_15px_rgba(59,130,246,0.3)]"
 						>intelligente et évolutive.</span
 					>
 				</h1>
@@ -93,7 +110,9 @@
 				</p>
 
 				<div class="flex flex-wrap justify-center gap-4">
-					<button class="group btn px-10 shadow-xl shadow-primary/25 btn-lg btn-primary">
+					<button
+						class="group btn px-10 shadow-xl shadow-primary/40 transition-all btn-lg btn-primary hover:-translate-y-1 hover:shadow-2xl hover:shadow-primary/70"
+					>
 						Commencer l'expérience <ArrowRight
 							size={18}
 							class="ml-2 transition-transform group-hover:translate-x-1"
@@ -106,7 +125,7 @@
 						Découvrir le projet
 					</button>
 					<a
-						href="https://github.com/yourusername/myista"
+						href="https://github.com/rodims-code/MyISTA"
 						target="_blank"
 						rel="noopener noreferrer"
 						class="btn rounded-full border-slate-200 px-10 btn-outline btn-lg hover:bg-slate-50 hover:text-primary"
@@ -125,16 +144,16 @@
 					></div>
 					<div class="absolute inset-0 flex items-center justify-center">
 						<div
-							class="flex flex-col items-center opacity-40 transition-opacity group-hover:opacity-100 w-full"
+							class="flex w-full flex-col items-center opacity-40 transition-opacity group-hover:opacity-100"
 						>
-<!-- 							<LayoutGrid size={64} class="mb-4 text-primary" />
+							<!-- 							<LayoutGrid size={64} class="mb-4 text-primary" />
 							<p class="font-mono text-sm tracking-widest uppercase">Dashboard Aperçu</p> -->
 							<!-- svelte-ignore a11y_img_redundant_alt -->
-							<img 
-							src="src/public/Screenshot 2026-03-14 193538.png" 
-							alt="Image not found" 
-							class="w-[95%] h-full rounded-xl"
-							>
+							<img
+								src="src/public/Screenshot 2026-03-14 193538.png"
+								alt="Image not found"
+								class="h-full w-[95%] rounded-xl"
+							/>
 						</div>
 					</div>
 				</div>
@@ -222,13 +241,22 @@
 							'Un environnement propre et protégé pour vos données.'
 						)}
 					</div>
-					<div class="rounded-[2.5rem] border border-white/10 bg-white/5 p-8 backdrop-blur-sm">
-						<div class="space-y-6">
+					<div
+						class="relative rounded-[2.5rem] border border-white/10 bg-white/5 p-8 shadow-[0_0_30px_rgba(59,130,246,0.15)] backdrop-blur-md transition-all hover:shadow-[0_0_50px_rgba(59,130,246,0.3)]"
+					>
+						<div
+							class="pointer-events-none absolute inset-0 rounded-[2.5rem] bg-gradient-to-br from-primary/20 to-transparent opacity-50"
+						></div>
+						<div class="relative space-y-6">
 							<div class="h-4 w-3/4 animate-pulse rounded-full bg-white/10"></div>
 							<div class="h-4 w-1/2 animate-pulse rounded-full bg-white/10"></div>
 							<div class="grid grid-cols-2 gap-4 pt-4">
-								<div class="h-32 rounded-2xl border border-primary/30 bg-primary/20"></div>
-								<div class="h-32 rounded-2xl border border-white/10 bg-white/5"></div>
+								<div
+									class="h-32 rounded-2xl border border-primary/30 bg-primary/20 shadow-[0_0_15px_rgba(var(--color-primary),0.2)]"
+								></div>
+								<div
+									class="h-32 rounded-2xl border border-white/10 bg-white/5 transition-colors hover:bg-white/10"
+								></div>
 							</div>
 							<div class="h-4 w-full animate-pulse rounded-full bg-white/10"></div>
 						</div>
@@ -286,6 +314,63 @@
 			</div>
 		</section>
 
+		<!-- Section Feedback avec effets lumineux -->
+		<section id="feedback" class="relative overflow-hidden bg-slate-900 px-6 py-24 text-white">
+			<!-- Glow effects background -->
+			<div
+				class="pointer-events-none absolute top-0 left-1/2 h-[60%] w-[60%] -translate-x-1/2 rounded-full bg-primary/20 blur-[150px]"
+			></div>
+			<div
+				class="pointer-events-none absolute right-0 bottom-0 h-[40%] w-[40%] rounded-full bg-blue-500/10 blur-[120px]"
+			></div>
+
+			<div class="relative z-10 mx-auto max-w-3xl text-center">
+				<div
+					class="mb-6 inline-flex items-center justify-center rounded-2xl border border-white/10 bg-white/5 p-3 shadow-[0_0_15px_rgba(255,255,255,0.1)] backdrop-blur-sm"
+				>
+					<Sparkles size={28} class="animate-pulse text-primary" />
+				</div>
+				<h2 class="mb-6 text-3xl font-bold drop-shadow-md md:text-5xl">Votre avis compte !</h2>
+				<p class="mb-12 text-lg text-slate-300">
+					Un encouragement, une idée ou un retour ? Laissez-nous un message pour nous aider à
+					améliorer <span class="font-semibold text-primary">MyISTA</span>.
+				</p>
+
+				<form
+					class="mx-auto max-w-xl rounded-3xl border border-white/10 bg-white/5 p-8 text-left shadow-2xl shadow-primary/20 backdrop-blur-xl transition-all hover:shadow-primary/30"
+				>
+					<div class="form-control mb-4">
+						<label class="label"
+							><span class="label-text text-slate-300">Nom complet (Optionnel)</span></label
+						>
+						<input
+							type="text"
+							placeholder="Comment vous appelez-vous ?"
+							class="input-bordered input w-full border-white/10 bg-white/5 text-white shadow-[0_0_15px_rgba(59,130,246,0.1)] transition-all placeholder:text-slate-500 focus:border-primary focus:ring-1 focus:ring-primary"
+						/>
+					</div>
+					<div class="form-control mb-6">
+						<label class="label"><span class="label-text text-slate-300">Votre message</span></label
+						>
+						<textarea
+							class="textarea-bordered textarea h-32 w-full border-white/10 bg-white/5 text-white shadow-[0_0_15px_rgba(59,130,246,0.1)] transition-all placeholder:text-slate-500 focus:border-primary focus:ring-1 focus:ring-primary"
+							placeholder="Écrivez votre encouragement ou feedback ici..."
+						></textarea>
+					</div>
+					<button
+						type="button"
+						class="group btn w-full shadow-lg shadow-primary/30 transition-all btn-primary hover:-translate-y-1 hover:shadow-primary/60"
+					>
+						<Send
+							size={18}
+							class="mr-2 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"
+						/>
+						Envoyer le message
+					</button>
+				</form>
+			</div>
+		</section>
+
 		<footer class="border-t border-slate-200 bg-slate-50 px-6 py-16">
 			<div class="mx-auto grid max-w-6xl grid-cols-1 gap-12 md:grid-cols-4">
 				<div class="col-span-1 md:col-span-2">
@@ -306,6 +391,7 @@
 						<li><a href="#problemes" class="hover:text-primary">Enjeux</a></li>
 						<li><a href="#solutions" class="hover:text-primary">Fonctionnalités</a></li>
 						<li><a href="#pitch" class="hover:text-primary">Pitch Officiel</a></li>
+						<li><a href="#feedback" class="hover:text-primary">Nous contacter</a></li>
 					</ul>
 				</div>
 				<div>
@@ -331,10 +417,10 @@
 
 {#snippet problemCard(Icon, title, desc)}
 	<div
-		class="group rounded-3xl border border-slate-100 bg-slate-50 p-8 transition-all duration-300 hover:-translate-y-2 hover:bg-white hover:shadow-xl hover:shadow-slate-200/50"
+		class="group rounded-3xl border border-slate-100 bg-slate-50 p-8 transition-all duration-300 hover:-translate-y-2 hover:bg-white hover:shadow-[0_0_30px_rgba(59,130,246,0.2)]"
 	>
 		<div
-			class="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-primary shadow-sm transition-colors group-hover:bg-primary group-hover:text-white"
+			class="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-primary shadow-sm transition-all group-hover:bg-primary group-hover:text-white group-hover:shadow-[0_0_15px_rgba(59,130,246,0.4)]"
 		>
 			<Icon size={24} />
 		</div>
@@ -345,10 +431,10 @@
 
 {#snippet solutionItem(Icon, title, desc)}
 	<div
-		class="flex gap-6 rounded-2xl border border-transparent p-6 transition-colors hover:border-white/10 hover:bg-white/5"
+		class="group flex gap-6 rounded-2xl border border-transparent p-6 transition-all hover:border-white/10 hover:bg-white/5 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)]"
 	>
 		<div
-			class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/20 text-primary"
+			class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/20 text-primary transition-all group-hover:scale-110 group-hover:shadow-[0_0_15px_rgba(59,130,246,0.4)]"
 		>
 			<Icon size={24} />
 		</div>
