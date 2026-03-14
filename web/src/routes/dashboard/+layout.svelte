@@ -200,7 +200,7 @@
 					</div>
 
 					<!-- Nav links -->
-					<ul class="menu flex-1 gap-1 p-2">
+					<ul class="menu flex-1 gap-1 p-2 w-full">
 						{#each navItems as { href, label, Icon }}
 							<li>
 								<a
