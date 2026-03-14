@@ -4,6 +4,7 @@
 	import api from '$lib/index';
 	import { ACCESS_TOKEN } from '$lib/constants';
 	import { fetchCurrentUser, updateCurrentUser } from '$lib/userApi';
+	import { theme } from '$lib/theme';
 
 	let userData = $state<any>({});
 	let loading = $state(true);
@@ -162,7 +163,13 @@
 				<div class="form-control">
 					<label class="swap swap-rotate">
 						<!-- this hidden checkbox controls the state -->
-						<input type="checkbox" class="theme-controller" value="synthwave" />
+						<input
+							type="checkbox"
+							class="theme-controller"
+							value="synthwave"
+							checked={$theme === 'synthwave'}
+							onchange={(e) => ($theme = e.currentTarget.checked ? 'synthwave' : 'cupcake')}
+						/>
 
 						<!-- sun icon -->
 						<svg
@@ -208,8 +215,9 @@
 									type="radio"
 									name="theme-dropdown"
 									class="theme-controller btn btn-block w-full justify-start btn-ghost btn-sm"
-									aria-label="Default"
-									value="default"
+									aria-label="Cupcake (Light)"
+									value="cupcake"
+									bind:group={$theme}
 								/>
 							</li>
 							<li>
@@ -217,8 +225,9 @@
 									type="radio"
 									name="theme-dropdown"
 									class="theme-controller btn btn-block w-full justify-start btn-ghost btn-sm"
-									aria-label="Retro"
-									value="retro"
+									aria-label="black"
+									value="black"
+									bind:group={$theme}
 								/>
 							</li>
 							<li>
@@ -226,8 +235,9 @@
 									type="radio"
 									name="theme-dropdown"
 									class="theme-controller btn btn-block w-full justify-start btn-ghost btn-sm"
-									aria-label="Cyberpunk"
-									value="cyberpunk"
+									aria-label="cmyk"
+									value="cmyk"
+									bind:group={$theme}
 								/>
 							</li>
 							<li>
@@ -235,8 +245,9 @@
 									type="radio"
 									name="theme-dropdown"
 									class="theme-controller btn btn-block w-full justify-start btn-ghost btn-sm"
-									aria-label="Valentine"
-									value="valentine"
+									aria-label="caramellatte"
+									value="caramellatte"
+									bind:group={$theme}
 								/>
 							</li>
 							<li>
@@ -244,8 +255,9 @@
 									type="radio"
 									name="theme-dropdown"
 									class="theme-controller btn btn-block w-full justify-start btn-ghost btn-sm"
-									aria-label="Aqua"
-									value="aqua"
+									aria-label="light"
+									value="light"
+									bind:group={$theme}
 								/>
 							</li>
 						</ul>

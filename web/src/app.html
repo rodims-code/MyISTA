@@ -1,8 +1,13 @@
 <!doctype html>
-<html lang="en" data-theme="cupcake">
+<html lang="en">
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<script>
+			// Prevent FOUC: apply theme before page rendering
+			const theme = localStorage.getItem('theme') || 'cupcake';
+			document.documentElement.setAttribute('data-theme', theme);
+		</script>
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">
