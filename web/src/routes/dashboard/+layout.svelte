@@ -186,7 +186,11 @@
                  {sidebarOpen ? 'is-drawer-open w-full lg:w-64' : 'is-drawer-close w-full lg:w-20'}"
 				>
 					<!-- Logo -->
-					<div class="flex min-h-[64px] items-center gap-3 border-b border-base-200 p-4">
+					<div
+						class="flex min-h-[64px] items-center gap-3 border-b border-base-200 p-4 {sidebarOpen
+							? ''
+							: 'w-full justify-center'}"
+					>
 						<div
 							class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-primary shadow shadow-primary/30"
 						>
@@ -200,7 +204,7 @@
 					</div>
 
 					<!-- Nav links -->
-					<ul class="menu flex-1 gap-1 p-2 w-full">
+					<ul class="menu w-full flex-1 gap-1 p-2">
 						{#each navItems as { href, label, Icon }}
 							<li>
 								<a
