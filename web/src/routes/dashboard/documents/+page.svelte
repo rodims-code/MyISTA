@@ -40,6 +40,28 @@
 		if (path.startsWith('http')) return path;
 		return `${PUBLIC_API_URL.replace(/\/$/, '')}${path}`;
 	}
+
+	async function handleDownload(doc: any) {
+		const url = getDownloadUrl(doc.fichier);
+		const filename = doc.fichier.split('/').pop() || doc.titre || 'document';
+
+		try {
+			const response = await fetch(url);
+			if (!response.ok) throw new Error('Erreur réseau');
+			const blob = await response.blob();
+			const blobUrl = window.URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = blobUrl;
+			a.download = filename;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			window.URL.revokeObjectURL(blobUrl);
+		} catch (error) {
+			console.error('Erreur de téléchargement:', error);
+			window.open(url, '_blank'); // Fallback: ouvrir dans un nouvel onglet
+		}
+	}
 </script>
 
 <svelte:head>
@@ -91,14 +113,13 @@
 								</span>
 							</div>
 						</div>
-						<a
-							href={getDownloadUrl(doc.fichier)}
-							target="_blank"
+						<button
+							onclick={() => handleDownload(doc)}
 							class="btn btn-square text-base-content/40 btn-ghost btn-sm hover:text-primary"
 							title="Télécharger"
 						>
 							<Download size={16} />
-						</a>
+						</button>
 					</div>
 				</div>
 			{:else}

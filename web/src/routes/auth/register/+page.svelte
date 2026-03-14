@@ -188,7 +188,7 @@
 								>
 									<option value={null} disabled selected>Choisir une filière</option>
 									{#each filieres as f}
-										<option value={f.id}>{f.nom}</option>
+										<option value={f.nom}>{f.nom}</option>
 									{/each}
 								</select>
 								<Briefcase
