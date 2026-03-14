@@ -149,6 +149,10 @@ class AffectationSalle(models.Model):
 # -------------------------
 
 class InfosEssentielles(models.Model):
+    STATUT_CHOICES = (
+        ("approuve", "Approuvé"),
+        ("en_attente", "En attente"),
+    )
 
     titre = models.CharField(max_length=200)
 
@@ -160,6 +164,12 @@ class InfosEssentielles(models.Model):
         null=True
     )
 
+    statut = models.CharField(
+        max_length=20,
+        choices=STATUT_CHOICES,
+        default="approuve"
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -167,10 +177,53 @@ class InfosEssentielles(models.Model):
 
 
 # -------------------------
+# ACTIVITY LOG
+# -------------------------
+
+class ActivityLog(models.Model):
+    ACTION_CHOICES = (
+        ("create", "Création"),
+        ("update", "Modification"),
+        ("delete", "Suppression"),
+        ("role_change", "Changement de rôle"),
+        ("approve", "Validation"),
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="activities"
+    )
+    
+    action = models.CharField(
+        max_length=20,
+        choices=ACTION_CHOICES
+    )
+    
+    # Ex: "Document", "InfosEssentielles", "User"
+    cible_type = models.CharField(max_length=100)
+    
+    # Titre ou ID de la cible (ex: "Planning S3", "T12345")
+    cible_nom = models.CharField(max_length=255)
+    
+    details = models.TextField(blank=True, null=True)
+
+    date_action = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} a {self.get_action_display().lower()} : {self.cible_nom}"
+
+
+
+# -------------------------
 # DOCUMENTS
 # -------------------------
 
 class Document(models.Model):
+    STATUT_CHOICES = (
+        ("approuve", "Approuvé"),
+        ("en_attente", "En attente"),
+    )
 
     titre = models.CharField(max_length=200)
 
@@ -193,6 +246,12 @@ class Document(models.Model):
     uploader = models.ForeignKey(
         User,
         on_delete=models.CASCADE
+    )
+
+    statut = models.CharField(
+        max_length=20,
+        choices=STATUT_CHOICES,
+        default="approuve"
     )
 
     date_upload = models.DateTimeField(auto_now_add=True)

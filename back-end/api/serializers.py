@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Batiment, Salle, AffectationSalle, InfosEssentielles, Document
+from .models import User, Batiment, Salle, AffectationSalle, InfosEssentielles, Document, ActivityLog
 from django.contrib.auth import get_user_model
 
 
@@ -43,4 +43,12 @@ class InfosEssentiellesSerializer(serializers.ModelSerializer):
 class DocumentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Document
+        fields = '__all__'
+
+
+class ActivityLogSerializer(serializers.ModelSerializer):
+    user_name = serializers.CharField(source='user.username', read_only=True)
+
+    class Meta:
+        model = ActivityLog
         fields = '__all__'

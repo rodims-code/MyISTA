@@ -4,10 +4,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import (
     UserSerializer, BatimentSerializer, SalleSerializer,
-    AffectationSalleSerializer, InfosEssentiellesSerializer, DocumentSerializer
+    AffectationSalleSerializer, InfosEssentiellesSerializer, DocumentSerializer,
+    ActivityLogSerializer
 )
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import User, Batiment, Salle, AffectationSalle, InfosEssentielles, Document
+from .models import User, Batiment, Salle, AffectationSalle, InfosEssentielles, Document, ActivityLog, Filiere
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -74,11 +75,32 @@ class InfosEssentiellesListCreate(generics.ListCreateAPIView):
     serializer_class = InfosEssentiellesSerializer
     permission_classes = [IsAuthenticated]
 
+    def perform_create(self, serializer):
+        statut = "approuve" if self.request.user.role == "admin" else "en_attente"
+        instance = serializer.save(statut=statut)
+        ActivityLog.objects.create(
+            user=self.request.user,
+            action="create",
+            cible_type="InfosEssentielles",
+            cible_nom=instance.titre
+        )
+
 
 class InfosEssentiellesDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = InfosEssentielles.objects.all()
     serializer_class = InfosEssentiellesSerializer
     permission_classes = [IsAuthenticated]
+
+    def perform_update(self, serializer):
+        original = self.get_object()
+        instance = serializer.save()
+        if original.statut == "en_attente" and instance.statut == "approuve":
+            ActivityLog.objects.create(
+                user=self.request.user,
+                action="approve",
+                cible_type="InfosEssentielles",
+                cible_nom=instance.titre
+            )
 
 
 class DocumentListCreate(generics.ListCreateAPIView):
@@ -93,10 +115,84 @@ class DocumentListCreate(generics.ListCreateAPIView):
         )
 
     def perform_create(self, serializer):
-        serializer.save(uploader=self.request.user)
+        statut = "approuve" if self.request.user.role == "admin" else "en_attente"
+        instance = serializer.save(uploader=self.request.user, statut=statut)
+        ActivityLog.objects.create(
+            user=self.request.user,
+            action="create",
+            cible_type="Document",
+            cible_nom=instance.titre
+        )
 
 
 class DocumentDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
     permission_classes = [IsAuthenticated]
+
+    def perform_update(self, serializer):
+        original = self.get_object()
+        instance = serializer.save()
+        if original.statut == "en_attente" and instance.statut == "approuve":
+            ActivityLog.objects.create(
+                user=self.request.user,
+                action="approve",
+                cible_type="Document",
+                cible_nom=instance.titre
+            )
+
+class DashboardStatsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        stats = {
+            "etudiants": User.objects.filter(role="student").count(),
+            "filieres": Filiere.objects.count(),
+            "salles": Salle.objects.count(),
+            "documents": Document.objects.filter(statut="approuve").count(),
+        }
+        recent_activities = ActivityLog.objects.order_by("-date_action")[:5]
+        activities_data = ActivityLogSerializer(recent_activities, many=True).data
+        return Response({
+            "stats": stats,
+            "recent_activity": activities_data
+        })
+
+class UserRoleUpdateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, pk):
+        if request.user.role != "admin":
+            return Response({"error": "Accès refusé"}, status=403)
+        try:
+            user_to_update = User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            return Response({"error": "Utilisateur introuvable"}, status=404)
+        
+        new_role = request.data.get("role")
+        if new_role not in dict(User.ROLE_CHOICES).keys():
+            return Response({"error": "Rôle invalide"}, status=400)
+            
+        user_to_update.role = new_role
+        user_to_update.save()
+        
+        ActivityLog.objects.create(
+            user=request.user,
+            action="role_change",
+            cible_type="User",
+            cible_nom=user_to_update.username,
+            details=f"Nouveau rôle: {new_role}"
+        )
+        return Response({"message": "Rôle mis à jour"})
+
+class UserListView(generics.ListAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = User.objects.all()
+        roles = self.request.query_params.get('role', None)
+        if roles:
+            role_list = roles.split(',')
+            queryset = queryset.filter(role__in=role_list)
+        return queryset
