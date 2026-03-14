@@ -115,17 +115,13 @@
 		/>
 
 		<!-- ── Page content ── -->
-		<div class="drawer-content flex h-full flex-col gap-4 py-4 pr-4 pl-4 lg:pl-0">
+		<div class="drawer-content flex h-full flex-col gap-4 overflow-y-auto py-4 pr-4 pl-4 lg:pl-0">
 			<!-- Topbar -->
 			<header
-				class="navbar z-30 shrink-0 gap-2 rounded-full border border-base-200/50 bg-base-100 px-4 shadow-sm"
+				class="navbar sticky top-0 z-30 shrink-0 gap-2 rounded-full border border-base-200/50 bg-base-100 px-4 shadow-sm"
 			>
 				<!-- Hamburger (mobile + desktop toggle) -->
-				<label
-					for="sidebar-drawer"
-					class="drawer-button btn btn-ghost btn-sm lg:hidden"
-					aria-label="Ouvrir menu"
-				>
+				<label for="sidebar-drawer" class="drawer-button btn btn-ghost btn-sm lg:hidden">
 					<Menu size={20} />
 				</label>
 
@@ -167,7 +163,7 @@
 
 			<!-- Main content -->
 			<main
-				class="flex-1 overflow-y-auto rounded-[2rem] border border-base-200/50 bg-base-100 p-4 shadow-sm md:p-6"
+				class="flex-1 shrink-0 rounded-[2rem] border border-base-200/50 bg-base-100 p-4 shadow-sm md:p-6"
 			>
 				{@render children()}
 			</main>
