@@ -211,7 +211,7 @@
 								>
 									<option value={null} disabled selected>Choisir un niveau</option>
 									{#each niveaux as n}
-										<option value={n.id}>{n.nom}</option>
+										<option value={n.nom}>{n.nom}</option>
 									{/each}
 								</select>
 								<Layers
