@@ -3,13 +3,18 @@
 	import { onMount } from 'svelte';
 	import api from '$lib/index';
 	import { PUBLIC_API_URL } from '$env/static/public';
+	import { fetchCurrentUser } from '$lib/userApi';
+	import AddDocument from '$lib/components/AddDocument.svelte';
 
 	let documents = $state<any[]>([]);
 	let loading = $state(true);
 	let search = $state('');
+	let currentUser = $state<any>(null);
+	let showAddDocModal = $state(false);
 
 	onMount(async () => {
 		try {
+			currentUser = await fetchCurrentUser();
 			const res = await api.get('/api/documents/');
 			documents = res.data;
 		} catch (error) {
@@ -81,10 +86,12 @@
 				<Search size={15} class="text-base-content/40" />
 				<input type="text" placeholder="Rechercher…" class="grow" bind:value={search} />
 			</label>
-			<button class="btn gap-2 btn-sm btn-primary">
-				<Upload size={16} />
-				<span class="hidden sm:inline">Ajouter</span>
-			</button>
+			{#if currentUser && currentUser.role !== 'student'}
+				<button class="btn gap-2 btn-sm btn-primary" onclick={() => (showAddDocModal = true)}>
+					<Upload size={16} />
+					<span class="hidden sm:inline">Ajouter</span>
+				</button>
+			{/if}
 		</div>
 	</div>
 
@@ -106,11 +113,16 @@
 						</div>
 						<div class="min-w-0 flex-1">
 							<p class="truncate text-sm font-semibold text-base-content">{doc.titre}</p>
-							<div class="mt-1 flex items-center gap-2">
+							<div class="mt-1 flex flex-wrap items-center gap-2">
 								<span class="badge badge-ghost badge-xs">{doc.cours}</span>
 								<span class="text-xs text-base-content/40">
 									{new Date(doc.date_upload).toLocaleDateString()}
 								</span>
+								{#if currentUser && currentUser.role !== 'student'}
+									<span class="badge badge-xs {doc.statut === 'approuve' ? 'badge-success badge-outline' : 'badge-warning badge-outline'}">
+										{doc.statut === 'approuve' ? 'Approuvé' : 'En attente'}
+									</span>
+								{/if}
 							</div>
 						</div>
 						<button
@@ -131,3 +143,5 @@
 		</div>
 	{/if}
 </div>
+
+<AddDocument bind:open={showAddDocModal} />

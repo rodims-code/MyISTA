@@ -2,12 +2,15 @@
 	import { Info, Calendar, Tag, ChevronRight, Loader2 } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import api from '$lib/index';
+	import { fetchCurrentUser } from '$lib/userApi';
 
 	let infos = $state<any[]>([]);
 	let loading = $state(true);
+	let currentUser = $state<any>(null);
 
 	onMount(async () => {
 		try {
+			currentUser = await fetchCurrentUser();
 			const res = await api.get('/api/infos/');
 			infos = res.data;
 		} catch (error) {
@@ -59,6 +62,11 @@
 										<Calendar size={12} />
 										{new Date(info.created_at).toLocaleDateString()}
 									</span>
+									{#if currentUser && currentUser.role !== 'student'}
+										<span class="badge badge-sm {info.statut === 'approuve' ? 'badge-success badge-outline' : 'badge-warning badge-outline'}">
+											{info.statut === 'approuve' ? 'Approuvé' : 'En attente'}
+										</span>
+									{/if}
 								</div>
 							</div>
 
