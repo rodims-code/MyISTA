@@ -47,7 +47,7 @@
 			<button
 				class="btn absolute top-2 right-2 btn-circle btn-ghost btn-sm"
 				onclick={close}
-				type="button">✕</button
+				type="button">❌</button
 			>
 		</form>
 		<h3 id="add-info-modal-title" class="mb-6 flex items-center gap-2 text-lg font-bold">
@@ -63,20 +63,20 @@
 		{/if}
 
 		<form onsubmit={handleSubmit} class="flex flex-col gap-4">
-			<div class="form-control">
+			<div class="form-control grid">
 				<label class="label"><span class="label-text">Titre de l'Avis</span></label>
 				<input
 					type="text"
-					class="input-bordered input"
+					class="input-bordered input w-full"
 					bind:value={newInfo.titre}
 					required
 					placeholder="Ex: Rattrapage d'algorithmique"
 				/>
 			</div>
 
-			<div class="form-control">
+			<div class="form-control grid">
 				<label class="label"><span class="label-text">Catégorie</span></label>
-				<select class="select-bordered select" bind:value={newInfo.categorie} required>
+				<select class="select-bordered select w-full" bind:value={newInfo.categorie} required>
 					<option value="" disabled selected>Choisir une catégorie</option>
 					<option value="Urgent">Urgent</option>
 					<option value="Examen">Examen</option>
@@ -85,10 +85,10 @@
 				</select>
 			</div>
 
-			<div class="form-control">
+			<div class="form-control grid">
 				<label class="label"><span class="label-text">Contenu / Message</span></label>
 				<textarea
-					class="textarea-bordered textarea h-24"
+					class="textarea-bordered textarea h-50 w-full"
 					bind:value={newInfo.contenu}
 					required
 					placeholder="Détails de l'information..."

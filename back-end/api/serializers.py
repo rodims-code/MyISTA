@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Batiment, Salle, AffectationSalle, InfosEssentielles, Document, ActivityLog
+from .models import User, Batiment, Salle, AffectationSalle, InfosEssentielles, Document, ActivityLog, Filiere, Niveau
 from django.contrib.auth import get_user_model
 
 
@@ -8,7 +8,7 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["matricule", "username", "password", "niveau", "filiere", "role", "date_inscription"]
+        fields = ['id',"matricule", "username", "password", "niveau", "filiere", "role", "date_inscription"]
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
@@ -41,9 +41,19 @@ class InfosEssentiellesSerializer(serializers.ModelSerializer):
 
 
 class DocumentSerializer(serializers.ModelSerializer):
+    filiere = serializers.SlugRelatedField(
+        queryset=Filiere.objects.all(),
+        slug_field='nom'
+    )
+    niveau = serializers.SlugRelatedField(
+        queryset=Niveau.objects.all(),
+        slug_field='nom'
+    )
+
     class Meta:
         model = Document
         fields = '__all__'
+        read_only_fields = ['uploader', 'statut']
 
 
 class ActivityLogSerializer(serializers.ModelSerializer):

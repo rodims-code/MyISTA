@@ -150,7 +150,7 @@
 							<p class="font-mono text-sm tracking-widest uppercase">Dashboard Aperçu</p> -->
 							<!-- svelte-ignore a11y_img_redundant_alt -->
 							<img
-								src="src/public/Screenshot 2026-03-14 193538.png"
+								src="src/public/Screenshot (44).png"
 								alt="Image not found"
 								class="h-full w-[95%] rounded-xl"
 							/>

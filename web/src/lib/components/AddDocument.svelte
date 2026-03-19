@@ -13,11 +13,11 @@
 		titre: '',
 		cours: '',
 		filiere: '',
-		niveau: ''
+		niveau: '',
 	});
 
-	let filieres = $state<any[]>([]);
-	let niveaux = $state<any[]>([]);
+	let filiere = $state<any[]>([]);
+	let niveau = $state<any[]>([]);
 	let fileInput = $state<HTMLInputElement | null>(null);
 
 	async function loadFormOptions() {
@@ -45,8 +45,8 @@
 		formData.append('titre', newDoc.titre);
 		formData.append('cours', newDoc.cours);
 		// FIXME: il faudrait ajouter filiere_id et niveau_id
-		// formData.append('filiere', newDoc.filiere);
-		// formData.append('niveau', newDoc.niveau);
+		formData.append('filiere', newDoc.filiere);
+		formData.append('niveau', newDoc.niveau);
 		formData.append('fichier', fileInput.files[0]);
 
 		try {
@@ -100,28 +100,34 @@
 		{/if}
 
 		<form onsubmit={handleSubmit} class="flex flex-col gap-4">
-			<div class="form-control">
+			<div class="form-control grid">
 				<label class="label"><span class="label-text">Titre du document</span></label>
-				<input type="text" class="input-bordered input" bind:value={newDoc.titre} required />
+				<input type="text" class="input-bordered input w-full" bind:value={newDoc.titre} required />
 			</div>
 
-			<div class="form-control">
+			<div class="form-control grid">
 				<label class="label"><span class="label-text">Matière / Cours</span></label>
-				<input type="text" class="input-bordered input" bind:value={newDoc.cours} required />
+				<input type="text" class="input-bordered input w-full" bind:value={newDoc.cours} required />
 			</div>
 
 			<div class="grid grid-cols-2 gap-4">
 				<div class="form-control">
-					<label class="label"><span class="label-text">Filière (ID)</span></label>
-					<input type="number" class="input-bordered input" bind:value={newDoc.filiere} required />
+					<label class="label"><span class="label-text">Filière</span></label>
+					<select class="select-bordered select w-full" bind:value={newDoc.filiere} required>
+						<option value="" disabled selected>Choisir la filliere</option>
+						<option value="G">G</option>
+					</select>
 				</div>
 				<div class="form-control">
-					<label class="label"><span class="label-text">Niveau (ID)</span></label>
-					<input type="number" class="input-bordered input" bind:value={newDoc.niveau} required />
+					<label class="label"><span class="label-text">Niveau</span></label>
+					<select class="select-bordered select w-full" bind:value={newDoc.niveau} required>
+						<option value="" disabled selected>Choisir le niveau</option>
+						<option value="Preparatoire">Preparatoire</option>
+					</select>
 				</div>
 			</div>
 
-			<div class="form-control mt-2">
+			<div class="form-control">
 				<label class="label"><span class="label-text">Fichier (PDF, DOCX...)</span></label>
 				<input
 					type="file"

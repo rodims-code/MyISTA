@@ -120,12 +120,12 @@
 							/>
 						</div>
 
-						<div class="form-control col-span-full">
+						<div class="form-control">
 							<label class="label pb-1"><span class="label-text font-medium">Filière</span></label>
 							<input
 								type="text"
 								class="input-bordered input"
-								value={userData.filiere.nom || 'Non défini'}
+								value={userData.filiere || 'Non défini'}
 								disabled
 							/>
 						</div>

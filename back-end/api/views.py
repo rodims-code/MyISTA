@@ -1,3 +1,4 @@
+from django.db.models import QuerySet
 from django.shortcuts import render
 from rest_framework import generics
 from rest_framework.views import APIView
@@ -109,10 +110,13 @@ class DocumentListCreate(generics.ListCreateAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return Document.objects.filter(
-            niveau=user.niveau,
-            filiere=user.filiere
-        )
+        if self.request.user.role == "admin" :
+            return Document.objects.all()
+        else :
+            return Document.objects.filter(
+                niveau__nom=user.niveau,
+                filiere__nom=user.filiere
+            )
 
     def perform_create(self, serializer):
         statut = "approuve" if self.request.user.role == "admin" else "en_attente"
