@@ -8,6 +8,7 @@ from .models import (
     AffectationSalle,
     InfosEssentielles,
     Document,
+    feedback,
 )
 
 
@@ -20,3 +21,4 @@ admin.site.register(Salle)
 admin.site.register(AffectationSalle)
 admin.site.register(InfosEssentielles)
 admin.site.register(Document)
+admin.site.register(feedback)
