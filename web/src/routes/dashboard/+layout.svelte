@@ -17,7 +17,8 @@
 		X,
 		ChevronRight,
 		Info,
-		CalendarCheck
+		CalendarCheck,
+		LifeBuoy
 	} from 'lucide-svelte';
 
 	let { children } = $props();
@@ -82,8 +83,13 @@
 		{ href: '/dashboard/salles', label: 'Salles', Icon: DoorOpen },
 		{ href: '/dashboard/affectations', label: 'Affectations', Icon: CalendarCheck },
 		{ href: '/dashboard/documents', label: 'Documents', Icon: FileText },
-		{ href: '/dashboard/infos', label: 'Infos', Icon: Info },
-		{ href: '/dashboard/settings', label: 'Paramètres', Icon: Settings }
+		{ href: '/dashboard/infos', label: 'Infos', Icon: Info }
+	];
+
+	const bottomNavItems = [
+		{ href: '/dashboard/feedbacks', label: 'Feedbacks', Icon: LifeBuoy},
+		{ href: '/dashboard/settings', label: 'Paramètres', Icon: Settings },
+		{ action: 'logout', label: 'Déconnexion', Icon: LogOut }
 	];
 
 	// Nom de la page courante
@@ -225,20 +231,29 @@
 						{/each}
 					</ul>
 
-					<!-- Bottom: logout shortcut -->
-					<div class="border-t border-base-200 p-2">
-						<button
-							onclick={logout}
-							class="flex w-full items-center gap-3 rounded-xl font-medium text-error/70 transition-colors hover:bg-error/10 hover:text-error
+						<!-- Bottom: settings, feedback and logout shortcuts -->
+						<div class="border-t border-base-200 p-2 space-y-1">
+							{#each bottomNavItems as item}
+								<button
+									onclick={() => {
+										if (item.action === 'logout') {
+											logout();
+										} else if (item.href) {
+											goto(item.href);
+										}
+									}}
+									class="flex w-full items-center gap-3 rounded-xl font-medium transition-colors
+                   {item.action === 'logout' ? 'text-error/70 hover:bg-error/10 hover:text-error' : 'text-base-content/70 hover:bg-base-200'}
                    {sidebarOpen ? 'px-3 py-2.5' : 'justify-center px-2 py-3'}"
-							title={!sidebarOpen ? 'Déconnexion' : undefined}
-						>
-							<LogOut size={20} class="shrink-0" />
-							{#if sidebarOpen}
-								<span class="text-sm whitespace-nowrap">Déconnexion</span>
-							{/if}
-						</button>
-					</div>
+									title={!sidebarOpen ? item.label : undefined}
+								>
+									<item.Icon size={20} class="shrink-0" />
+									{#if sidebarOpen}
+										<span class="text-sm whitespace-nowrap">{item.label}</span>
+									{/if}
+								</button>
+							{/each}
+						</div>
 				</nav>
 			</div>
 		</aside>
