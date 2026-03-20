@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Batiment, Salle, AffectationSalle, InfosEssentielles, Document, ActivityLog, Filiere, Niveau
+from .models import User, Batiment, Salle, AffectationSalle, InfosEssentielles, Document, ActivityLog, Filiere, Niveau, feedback
 from django.contrib.auth import get_user_model
 
 
@@ -61,4 +61,9 @@ class ActivityLogSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ActivityLog
+        fields = '__all__'
+
+class FeedbackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = feedback
         fields = '__all__'

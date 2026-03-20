@@ -6,10 +6,10 @@ from rest_framework.response import Response
 from .serializers import (
     UserSerializer, BatimentSerializer, SalleSerializer,
     AffectationSalleSerializer, InfosEssentiellesSerializer, DocumentSerializer,
-    ActivityLogSerializer
+    ActivityLogSerializer,  FeedbackSerializer
 )
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import User, Batiment, Salle, AffectationSalle, InfosEssentielles, Document, ActivityLog, Filiere
+from .models import User, Batiment, Salle, AffectationSalle, InfosEssentielles, Document, ActivityLog, Filiere, feedback
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -200,3 +200,11 @@ class UserListView(generics.ListAPIView):
             role_list = roles.split(',')
             queryset = queryset.filter(role__in=role_list)
         return queryset
+    
+class FeedbackListCreate(generics.ListCreateAPIView):
+    queryset = feedback.objects.all()
+    serializer_class = FeedbackSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)

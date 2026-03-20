@@ -259,3 +259,14 @@ class Document(models.Model):
 
     def __str__(self):
         return self.titre
+
+class feedback(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+    message = models.TextField()
+    date_submitted = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Feedback de {self.user.username} le {self.date_submitted.strftime('%Y-%m-%d %H:%M:%S')}"
