@@ -67,3 +67,4 @@ class FeedbackSerializer(serializers.ModelSerializer):
     class Meta:
         model = feedback
         fields = '__all__'
+        read_only_fields = ['user', 'statut']

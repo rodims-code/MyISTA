@@ -261,12 +261,24 @@ class Document(models.Model):
         return self.titre
 
 class feedback(models.Model):
+    STATUT_CHOICES = (
+        ("en_attente", "En attente"),
+        ("repondu", "Répondu"),
+    )
+
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE
     )
+    sujet = models.CharField(max_length=200, default="Feedback")
     message = models.TextField()
-    date_submitted = models.DateTimeField(auto_now_add=True)
+    reponse = models.TextField(blank=True, null=True)
+    statut = models.CharField(
+        max_length=20,
+        choices=STATUT_CHOICES,
+        default="en_attente"
+    )
+    date_soumission = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Feedback de {self.user.username} le {self.date_submitted.strftime('%Y-%m-%d %H:%M:%S')}"
+        return f"Feedback de {self.user.username} - {self.sujet}"

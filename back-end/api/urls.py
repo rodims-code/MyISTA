@@ -18,4 +18,6 @@ urlpatterns = [
     path("dashboard/stats/", views.DashboardStatsView.as_view(), name="dashboard-stats"),
     path("users/<int:pk>/role/", views.UserRoleUpdateView.as_view(), name="user-role-update"),
     path("feedbacks/", views.FeedbackListCreate.as_view(), name="feedback-list"),
+    path("feedbacks/<int:pk>/", views.FeedbackDetail.as_view(), name="feedback-detail"),
+    path("feedbacks/<int:pk>/reply/", views.FeedbackReplyView.as_view(), name="feedback-reply"),
 ]

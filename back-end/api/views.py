@@ -208,3 +208,29 @@ class FeedbackListCreate(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+class FeedbackDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = feedback.objects.all()
+    serializer_class = FeedbackSerializer
+    permission_classes = [IsAuthenticated]
+
+class FeedbackReplyView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        if request.user.role == "student":
+            return Response({"error": "Accès refusé"}, status=403)
+        try:
+            fb = feedback.objects.get(pk=pk)
+        except feedback.DoesNotExist:
+            return Response({"error": "Feedback introuvable"}, status=404)
+        
+        reponse_text = request.data.get("reponse")
+        if not reponse_text:
+            return Response({"error": "La réponse est obligatoire"}, status=400)
+            
+        fb.reponse = reponse_text
+        fb.statut = "repondu"
+        fb.save()
+        
+        return Response({"message": "Réponse envoyée avec succès"})
