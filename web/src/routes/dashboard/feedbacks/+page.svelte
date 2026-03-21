@@ -137,6 +137,12 @@
 				Nouveau Feedback
 			</button>
 		{/if}
+		{#if currentUser?.role === 'delegate'}
+			<button class="btn btn-primary" onclick={() => showNewFeedbackModal = true}>
+				<Plus size={18} class="mr-2" />
+				Nouveau Feedback
+			</button>
+		{/if}
 	</div>
 
 	{#if loading}
@@ -151,7 +157,7 @@
 				</div>
 				<h2 class="card-title">Aucun feedback</h2>
 				<p class="text-base-content/60">
-					{#if currentUser?.role === 'student'}
+					{#if currentUser?.role === 'student' && currentUser?.role === 'delegate'}
 						Vous n'avez soumis aucun feedback.
 					{:else}
 						Aucun feedback n'a été reçu pour le moment.
@@ -185,7 +191,7 @@
 							</td>
 							<td>{new Date(feedback.date_soumission).toLocaleDateString()}</td>
 							<td class="flex gap-2">
-								{#if currentUser && currentUser.role !== 'student'}
+								{#if currentUser && currentUser.role !== 'student' && currentUser.role !== 'delegate'}
 									<button
 										class="btn btn-sm btn-ghost btn-circle"
 										onclick={() => handleReply(feedback)}
@@ -200,7 +206,7 @@
 									>
 										<Trash2 size={16} />
 									</button>
-								{:else if currentUser && currentUser.role === 'student' && feedback.statut === 'repondu'}
+								{:else if currentUser && currentUser.role === 'student' && currentUser.role === 'delegate' && feedback.statut === 'repondu'}
                                     <button
                                         class="btn btn-sm btn-ghost btn-circle text-info"
                                         onclick={() => { selectedFeedback = feedback; showReplyModal = true; }}
@@ -223,7 +229,7 @@
 	<div class="modal modal-open">
 		<div class="modal-box">
 			<h3 class="font-bold text-lg mb-4">
-				{#if currentUser?.role !== 'student'}
+				{#if currentUser?.role !== 'student' && currentUser?.role !== 'delegate' && selectedFeedback.statut !== 'repondu'}
 					Répondre au feedback
 				{:else}
 					Détails du feedback
@@ -238,7 +244,7 @@
 				<p>{selectedFeedback.message}</p>
 			</div>
 
-			{#if currentUser?.role !== 'student' && selectedFeedback.statut !== 'repondu'}
+			{#if currentUser?.role !== 'student' && currentUser?.role !== 'delegate' && selectedFeedback.statut !== 'repondu'}
 				<div class="form-control">
 					<label class="label">
 						<span class="label-text">Votre réponse :</span>
