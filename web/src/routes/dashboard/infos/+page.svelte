@@ -7,6 +7,13 @@
 	let infos = $state<any[]>([]);
 	let loading = $state(true);
 	let currentUser = $state<any>(null);
+	let selectedInfo = $state<any>(null);
+	let modalElement = $state<HTMLDialogElement | null>(null);
+
+	function openModal(info: any) {
+		selectedInfo = info;
+		modalElement?.showModal();
+	}
 
 	onMount(async () => {
 		try {
@@ -76,12 +83,15 @@
 								{info.titre}
 							</h3>
 
-							<p class="text-sm leading-relaxed whitespace-pre-wrap text-base-content/70">
+							<p class="text-sm leading-relaxed whitespace-pre-wrap text-base-content/70 line-clamp-3">
 								{info.contenu}
 							</p>
 
 							<div class="mt-4 card-actions justify-end">
-								<button class="btn gap-2 font-bold text-primary btn-ghost btn-sm">
+								<button 
+									class="btn gap-2 font-bold text-primary btn-ghost btn-sm"
+									onclick={() => openModal(info)}
+								>
 									Lire la suite
 									<ChevronRight size={14} />
 								</button>
@@ -108,4 +118,42 @@
 			{/each}
 		</div>
 	{/if}
+
+	<!-- Modal details -->
+	<dialog bind:this={modalElement} class="modal modal-bottom sm:modal-middle">
+		<div class="modal-box">
+			<form method="dialog">
+				<button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+			</form>
+			{#if selectedInfo}
+				<div class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center pr-8">
+					<div class="flex items-center gap-2">
+						{#if selectedInfo.categorie}
+							<div class="badge gap-1 badge-outline px-3 py-3 badge-primary">
+								<Tag size={12} />
+								{selectedInfo.categorie}
+							</div>
+						{/if}
+						<span class="flex items-center gap-1 text-xs font-medium text-base-content/40">
+							<Calendar size={12} />
+							{new Date(selectedInfo.created_at).toLocaleDateString()}
+						</span>
+					</div>
+				</div>
+				
+				<h3 class="font-bold text-xl mb-4 text-base-content">{selectedInfo.titre}</h3>
+				<div class="bg-base-200/50 p-4 rounded-lg">
+					<p class="whitespace-pre-wrap text-sm leading-relaxed text-base-content/80">{selectedInfo.contenu}</p>
+				</div>
+			{/if}
+			<div class="modal-action">
+				<form method="dialog">
+					<button class="btn">Fermer</button>
+				</form>
+			</div>
+		</div>
+		<form method="dialog" class="modal-backdrop">
+			<button>close</button>
+		</form>
+	</dialog>
 </div>
