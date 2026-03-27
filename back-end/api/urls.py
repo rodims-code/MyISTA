@@ -15,6 +15,7 @@ urlpatterns = [
     path("infos/<int:pk>/", views.InfosEssentiellesDetail.as_view(), name="infos-detail"),
     path("documents/", views.DocumentListCreate.as_view(), name="document-list"),
     path("documents/<int:pk>/", views.DocumentDetail.as_view(), name="document-detail"),
+    path("documents/<int:pk>/toggle_favorite/", views.ToggleFavoriteView.as_view(), name="document-toggle-favorite"),
     path("dashboard/stats/", views.DashboardStatsView.as_view(), name="dashboard-stats"),
     path("users/<int:pk>/role/", views.UserRoleUpdateView.as_view(), name="user-role-update"),
     path("feedbacks/", views.FeedbackListCreate.as_view(), name="feedback-list"),

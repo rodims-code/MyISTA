@@ -145,6 +145,25 @@ class DocumentDetail(generics.RetrieveUpdateDestroyAPIView):
                 cible_nom=instance.titre
             )
 
+class ToggleFavoriteView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        try:
+            document = Document.objects.get(pk=pk)
+        except Document.DoesNotExist:
+            return Response({"error": "Document introuvable"}, status=404)
+
+        user = request.user
+        if document in user.favoris.all():
+            user.favoris.remove(document)
+            action = "removed"
+        else:
+            user.favoris.add(document)
+            action = "added"
+        
+        return Response({"status": action, "favoris": [doc.id for doc in user.favoris.all()]})
+
 class DashboardStatsView(APIView):
     permission_classes = [IsAuthenticated]
 
