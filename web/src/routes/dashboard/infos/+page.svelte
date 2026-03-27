@@ -9,6 +9,10 @@
 	let currentUser = $state<any>(null);
 	let selectedInfo = $state<any>(null);
 	let modalElement = $state<HTMLDialogElement | null>(null);
+	
+	let showEditModal = $state(false);
+	let editingInfoId = $state<number | null>(null);
+	let newInfo = $state({ titre: '', contenu: '', categorie: '' });
 
 	function openModal(info: any) {
 		selectedInfo = info;
@@ -26,6 +30,48 @@
 			loading = false;
 		}
 	});
+
+	async function saveInfo() {
+		try {
+			if (editingInfoId) {
+				const res = await api.put(`/api/infos/${editingInfoId}/`, newInfo);
+				infos = infos.map((i) => (i.id === editingInfoId ? res.data : i));
+			} else {
+				const res = await api.post('/api/infos/', newInfo);
+				infos = [res.data, ...infos];
+			}
+			showEditModal = false;
+			editingInfoId = null;
+		} catch (error) {
+			console.error('Save info error:', error);
+			alert('Erreur lors de la sauvegarde. Assurez-vous que tous les champs requis sont remplis.');
+		}
+	}
+
+	async function deleteInfo() {
+		if (!selectedInfo || !confirm('Voulez-vous vraiment supprimer cette information ?')) return;
+		try {
+			await api.delete(`/api/infos/${selectedInfo.id}/`);
+			infos = infos.filter((i) => i.id !== selectedInfo.id);
+			modalElement?.close();
+			selectedInfo = null;
+		} catch (error) {
+			console.error('Delete info error:', error);
+			alert('Erreur lors de la suppression');
+		}
+	}
+
+	function editInfo() {
+		if (!selectedInfo) return;
+		newInfo = {
+			titre: selectedInfo.titre,
+			contenu: selectedInfo.contenu,
+			categorie: selectedInfo.categorie || ''
+		};
+		editingInfoId = selectedInfo.id;
+		modalElement?.close();
+		showEditModal = true;
+	}
 </script>
 
 <svelte:head>
@@ -34,11 +80,25 @@
 
 <div class="flex flex-col gap-8">
 	<!-- Header -->
-	<div>
-		<h2 class="text-2xl font-bold text-base-content">Infos Essentielles</h2>
-		<p class="mt-1 text-sm text-base-content/50">
-			Dernières nouvelles et annonces importantes de l'ISTA
-		</p>
+	<div class="flex flex-col sm:flex-row justify-between gap-4 items-start sm:items-center">
+		<div>
+			<h2 class="text-2xl font-bold text-base-content">Infos Essentielles</h2>
+			<p class="mt-1 text-sm text-base-content/50">
+				Dernières nouvelles et annonces importantes de l'ISTA
+			</p>
+		</div>
+		{#if currentUser?.role === 'admin' || currentUser?.role === 'delegate'}
+		<button 
+			class="btn btn-primary shadow shadow-primary/30"
+			onclick={() => {
+				newInfo = { titre: '', contenu: '', categorie: '' };
+				editingInfoId = null;
+				showEditModal = true;
+			}}
+		>
+			Ajouter une info
+		</button>
+		{/if}
 	</div>
 
 	{#if loading}
@@ -49,18 +109,19 @@
 	{:else}
 		<div class="grid grid-cols-1 gap-6">
 			{#each infos as info}
+				{@const isUrgent = info.categorie && info.categorie.toLowerCase().includes('urgent')}
 				<div
-					class="group card overflow-hidden border border-base-200 bg-base-100 shadow-sm transition-all hover:shadow-md"
+					class="group card overflow-hidden border {isUrgent ? 'border-warning bg-warning/5' : 'border-base-200 bg-base-100'} shadow-sm transition-all hover:shadow-md"
 				>
 					<div class="flex flex-col md:flex-row">
 						<!-- Left accent color bar based on category or default -->
-						<div class="h-2 w-full bg-primary md:h-auto md:w-2"></div>
+						<div class="h-2 w-full {isUrgent ? 'bg-warning' : 'bg-primary'} md:h-auto md:w-2"></div>
 
 						<div class="card-body flex-1 p-6">
 							<div class="mb-4 flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
 								<div class="flex items-center gap-2">
 									{#if info.categorie}
-										<div class="badge gap-1 badge-outline px-3 py-3 badge-primary">
+										<div class="badge gap-1 badge-outline px-3 py-3 {isUrgent ? 'badge-warning' : 'badge-primary'}">
 											<Tag size={12} />
 											{info.categorie}
 										</div>
@@ -146,13 +207,57 @@
 					<p class="whitespace-pre-wrap text-sm leading-relaxed text-base-content/80">{selectedInfo.contenu}</p>
 				</div>
 			{/if}
-			<div class="modal-action">
+			<div class="modal-action flex justify-between w-full">
+				<div class="flex gap-2">
+					{#if currentUser?.role === 'admin' || currentUser?.role === 'delegate'}
+						<button type="button" class="btn btn-error btn-outline" onclick={deleteInfo}>Supprimer</button>
+						<button type="button" class="btn btn-primary" onclick={editInfo}>Modifier</button>
+					{/if}
+				</div>
 				<form method="dialog">
 					<button class="btn">Fermer</button>
 				</form>
 			</div>
 		</div>
 		<form method="dialog" class="modal-backdrop">
+			<button>close</button>
+		</form>
+	</dialog>
+
+	<!-- Form Modal for Create/Edit -->
+	<dialog class="modal" class:modal-open={showEditModal}>
+		<div class="modal-box bg-base-100 text-base-content">
+			<h3 class="font-bold text-lg mb-4">{editingInfoId ? "Modifier l'information" : "Nouvelle information"}</h3>
+			<form onsubmit={(e) => { e.preventDefault(); saveInfo(); }} class="flex flex-col gap-4">
+				<label class="form-control w-full">
+					<div class="label"><span class="label-text">Titre</span></div>
+					<input type="text" placeholder="Titre de l'annonce" class="input input-bordered w-full" bind:value={newInfo.titre} required />
+				</label>
+				
+				<label class="form-control w-full">
+					<div class="label"><span class="label-text">Catégorie</span></div>
+					<input type="text" placeholder="Ex: Urgent, Événement, Rappel..." class="input input-bordered w-full" bind:value={newInfo.categorie} />
+				</label>
+				
+				<label class="form-control w-full">
+					<div class="label"><span class="label-text">Contenu</span></div>
+					<textarea class="textarea textarea-bordered h-32 w-full" placeholder="Détails de l'annonce..." bind:value={newInfo.contenu} required></textarea>
+				</label>
+				
+				{#if (currentUser?.role !== 'admin') && !editingInfoId}
+					<div class="alert alert-info py-2 shadow-sm text-sm">
+						<Info size={18} />
+						<span>L'information sera en attente d'approbation par un administrateur.</span>
+					</div>
+				{/if}
+
+				<div class="modal-action">
+					<button type="button" class="btn" onclick={() => (showEditModal = false)}>Annuler</button>
+					<button type="submit" class="btn btn-primary">Sauvegarder</button>
+				</div>
+			</form>
+		</div>
+		<form method="dialog" class="modal-backdrop" onclick={() => (showEditModal = false)}>
 			<button>close</button>
 		</form>
 	</dialog>

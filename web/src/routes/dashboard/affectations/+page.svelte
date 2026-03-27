@@ -22,12 +22,12 @@
 	let editingEventId = $state<number | null>(null);
 
 	const filiereMap: Record<number, string> = {
-		1: 'TSDI (Digital)',
+		1: 'G',
 		2: 'TCE (Commerce)',
 		3: 'GE (Gestion)'
 	};
 	const niveauMap: Record<number, string> = {
-		1: '1ère Année',
+		1: 'Preparatoire',
 		2: '2ème Année'
 	};
 
