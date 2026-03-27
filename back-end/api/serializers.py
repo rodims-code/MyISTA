@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Batiment, Salle, AffectationSalle, InfosEssentielles, Document, ActivityLog, Filiere, Niveau, feedback
+from .models import User, Batiment, Salle, AffectationSalle, InfosEssentielles, Document, ActivityLog, Filiere, Niveau, feedback, Event
 from django.contrib.auth import get_user_model
 
 
@@ -68,3 +68,9 @@ class FeedbackSerializer(serializers.ModelSerializer):
         model = feedback
         fields = '__all__'
         read_only_fields = ['user', 'statut']
+
+class EventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Event
+        fields = '__all__'
+        read_only_fields = ['createur']

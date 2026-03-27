@@ -21,4 +21,6 @@ urlpatterns = [
     path("feedbacks/", views.FeedbackListCreate.as_view(), name="feedback-list"),
     path("feedbacks/<int:pk>/", views.FeedbackDetail.as_view(), name="feedback-detail"),
     path("feedbacks/<int:pk>/reply/", views.FeedbackReplyView.as_view(), name="feedback-reply"),
+    path("events/", views.EventListCreate.as_view(), name="event-list"),
+    path("events/<int:pk>/", views.EventDetail.as_view(), name="event-detail"),
 ]

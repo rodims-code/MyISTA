@@ -284,3 +284,25 @@ class feedback(models.Model):
 
     def __str__(self):
         return f"Feedback de {self.user.username} - {self.sujet}"
+
+
+# -------------------------
+# CALENDAR EVENTS
+# -------------------------
+
+class Event(models.Model):
+    titre = models.CharField(max_length=200)
+    description = models.TextField(blank=True, null=True)
+    debut = models.DateTimeField()
+    fin = models.DateTimeField()
+    all_day = models.BooleanField(default=False)
+    
+    filiere = models.ForeignKey(Filiere, on_delete=models.CASCADE, null=True, blank=True)
+    niveau = models.ForeignKey(Niveau, on_delete=models.CASCADE, null=True, blank=True)
+    salle = models.ForeignKey(Salle, on_delete=models.CASCADE, null=True, blank=True)
+    
+    createur = models.ForeignKey(User, on_delete=models.CASCADE)
+    date_creation = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.titre} ({self.debut} - {self.fin})"

@@ -3,13 +3,14 @@ from django.shortcuts import render
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.exceptions import PermissionDenied
 from .serializers import (
     UserSerializer, BatimentSerializer, SalleSerializer,
     AffectationSalleSerializer, InfosEssentiellesSerializer, DocumentSerializer,
-    ActivityLogSerializer,  FeedbackSerializer
+    ActivityLogSerializer,  FeedbackSerializer, EventSerializer
 )
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import User, Batiment, Salle, AffectationSalle, InfosEssentielles, Document, ActivityLog, Filiere, feedback
+from .models import User, Batiment, Salle, AffectationSalle, InfosEssentielles, Document, ActivityLog, Filiere, feedback, Event
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -249,7 +250,88 @@ class FeedbackReplyView(APIView):
             return Response({"error": "La réponse est obligatoire"}, status=400)
             
         fb.reponse = reponse_text
-        fb.statut = "repondu"
         fb.save()
         
         return Response({"message": "Réponse envoyée avec succès"})
+
+class EventListCreate(generics.ListCreateAPIView):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+    permission_classes = [IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        if request.user.role not in ["admin", "delegate"]:
+            raise PermissionDenied("Seuls les admins et délégués peuvent créer des événements.")
+            
+        data = request.data.copy()
+        repetition = data.pop('repetition', 'none')
+        fin_repetition_str = data.pop('fin_repetition', None)
+        
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        base_event = serializer.save(createur=request.user)
+        
+        created_events = [base_event]
+        
+        if repetition != 'none' and fin_repetition_str:
+            from datetime import datetime, timedelta
+            try:
+                fin_repetition = datetime.strptime(fin_repetition_str, '%Y-%m-%d').date()
+                current_start = base_event.debut
+                current_end = base_event.fin
+                
+                while True:
+                    if repetition == 'quotidienne':
+                        current_start += timedelta(days=1)
+                        current_end += timedelta(days=1)
+                    elif repetition == 'hebdomadaire':
+                        current_start += timedelta(weeks=1)
+                        current_end += timedelta(weeks=1)
+                    elif repetition == 'mensuelle':
+                        # Simple 4-week jump if dateutil is unavailable
+                        current_start += timedelta(weeks=4)
+                        current_end += timedelta(weeks=4)
+                    else:
+                        break
+                        
+                    if current_start.date() > fin_repetition:
+                        break
+                        
+                    new_event = Event.objects.create(
+                        titre=base_event.titre,
+                        description=base_event.description,
+                        debut=current_start,
+                        fin=current_end,
+                        all_day=base_event.all_day,
+                        salle=base_event.salle,
+                        filiere=base_event.filiere,
+                        niveau=base_event.niveau,
+                        createur=request.user
+                    )
+                    created_events.append(new_event)
+            except Exception as e:
+                print("Recurrence error:", e)
+
+        ActivityLog.objects.create(
+            user=request.user,
+            action="create",
+            cible_type="Event",
+            cible_nom=base_event.titre + (" (Répétition)" if len(created_events) > 1 else "")
+        )
+        
+        return Response(self.get_serializer(created_events, many=True).data, status=201)
+
+class EventDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_update(self, serializer):
+        if self.request.user.role not in ["admin", "delegate"]:
+            raise PermissionDenied("Seuls les admins et délégués peuvent modifier des événements.")
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        if self.request.user.role not in ["admin", "delegate"]:
+            raise PermissionDenied("Seuls les admins et délégués peuvent supprimer des événements.")
+        instance.delete()
