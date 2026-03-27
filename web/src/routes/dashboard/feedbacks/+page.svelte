@@ -131,13 +131,7 @@
 			<h1 class="text-3xl font-bold text-base-content">Feedbacks & Aide</h1>
 			<p class="text-base-content/60">Gérez les feedbacks et demandes d'aide de myISTA</p>
 		</div>
-		{#if currentUser?.role === 'student'}
-			<button class="btn btn-primary" onclick={() => showNewFeedbackModal = true}>
-				<Plus size={18} class="mr-2" />
-				Nouveau Feedback
-			</button>
-		{/if}
-		{#if currentUser?.role === 'delegate'}
+		{#if currentUser?.role === 'student' || currentUser?.role === 'delegate'}
 			<button class="btn btn-primary" onclick={() => showNewFeedbackModal = true}>
 				<Plus size={18} class="mr-2" />
 				Nouveau Feedback
@@ -157,7 +151,7 @@
 				</div>
 				<h2 class="card-title">Aucun feedback</h2>
 				<p class="text-base-content/60">
-					{#if currentUser?.role === 'student' && currentUser?.role === 'delegate'}
+					{#if currentUser?.role === 'student' || currentUser?.role === 'delegate'}
 						Vous n'avez soumis aucun feedback.
 					{:else}
 						Aucun feedback n'a été reçu pour le moment.
@@ -206,7 +200,7 @@
 									>
 										<Trash2 size={16} />
 									</button>
-								{:else if currentUser && currentUser.role === 'student' && currentUser.role === 'delegate' && feedback.statut === 'repondu'}
+								{:else if currentUser && (currentUser.role === 'student' || currentUser.role === 'delegate') && feedback.statut === 'repondu'}
                                     <button
                                         class="btn btn-sm btn-ghost btn-circle text-info"
                                         onclick={() => { selectedFeedback = feedback; showReplyModal = true; }}
