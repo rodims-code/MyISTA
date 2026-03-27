@@ -3,28 +3,45 @@
   import api from '$lib/index';
   import { ACCESS_TOKEN, REFRESH_TOKEN } from '$lib/constants';
   import { GraduationCap, User, Lock, AlertCircle, Loader2 } from 'lucide-svelte';
+	import { fetchCurrentUser } from '$lib/userApi';
 
   let matricule = $state('');
   let password = $state('');
   let loading = $state(false);
   let error = $state('');
 
-  async function handleLogin(e: SubmitEvent) {
+ async function handleLogin(e: SubmitEvent) {
     e.preventDefault();
     loading = true;
     error = '';
 
     try {
+      // 1. Récupération des tokens
       const res = await api.post('/api/token/', { matricule, password });
+      
+      // 2. Stockage immédiat (nécessaire pour que fetchCurrentUser fonctionne car il utilise le token)
       localStorage.setItem(ACCESS_TOKEN, res.data.access);
       localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-      goto('/dashboard');
+
+      // 3. Récupérer l'utilisateur pour connaître son rôle
+      const user = await fetchCurrentUser();
+
+      // 4. Redirection conditionnelle
+      if (user?.role === 'admin') {
+        goto('/dashboard'); // URL pour l'admin
+      } else {
+        goto('/dashboard/home'); // URL pour student/delegate
+      }
+
     } catch (err: any) {
+      console.error(err);
       if (err.response?.status === 401) {
         error = 'Nom d\'utilisateur ou mot de passe incorrect.';
       } else {
-        error = 'Une erreur est survenue. Veuillez réessayer.';
+        error = 'Une erreur est survenue lors de la connexion.';
       }
+      // Optionnel : nettoyer le localStorage en cas d'échec
+      localStorage.removeItem(ACCESS_TOKEN);
     } finally {
       loading = false;
     }

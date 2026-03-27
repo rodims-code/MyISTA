@@ -6,6 +6,7 @@
 	import api from '$lib/index';
 	import { ACCESS_TOKEN, REFRESH_TOKEN } from '$lib/constants';
 	import { theme } from '$lib/theme';
+	import { fetchCurrentUser } from '$lib/userApi';
 	import {
 		LayoutGrid,
 		Map,
@@ -19,11 +20,11 @@
 		ChevronRight,
 		Info,
 		CalendarCheck,
-		LifeBuoy
+		LifeBuoy,
+		Home
 	} from 'lucide-svelte';
 
 	let { children } = $props();
-
 	// Auth guard
 	let isAuthorized = $state<boolean | null>(null);
 
@@ -75,17 +76,29 @@
 		goto('/auth/login');
 	}
 
-	// Sidebar state
+	// 1. Déclare l'utilisateur comme un état réactif
+	let currentUser = $state<any>(null);
 	let sidebarOpen = $state(false);
 
-	const navItems = [
-		{ href: '/dashboard', label: 'Tableau de bord', Icon: LayoutGrid },
+	onMount(async () => {
+		// L'UI se mettra à jour dès que cette ligne sera exécutée
+		currentUser = await fetchCurrentUser();
+	});
+
+	// 2. Utilise $derived pour que le tableau se recalcule
+	// automatiquement quand currentUser change
+	const navItems = $derived([
+		{
+			href: currentUser?.role === 'admin' ? '/dashboard/' : '/dashboard/home',
+			label: currentUser?.role === 'admin' ? 'Tableau de bord' : 'Home',
+			Icon: currentUser?.role === 'admin' ? LayoutGrid : Home
+		},
 		{ href: '/dashboard/carte', label: 'Carte du campus', Icon: Map },
 		{ href: '/dashboard/salles', label: 'Salles', Icon: DoorOpen },
 		{ href: '/dashboard/affectations', label: 'Affectations', Icon: CalendarCheck },
 		{ href: '/dashboard/documents', label: 'Documents', Icon: FileText },
 		{ href: '/dashboard/infos', label: 'Infos', Icon: Info }
-	];
+	]);
 
 	const bottomNavItems = [
 		{ href: '/dashboard/feedbacks', label: 'Feedbacks', Icon: LifeBuoy },
