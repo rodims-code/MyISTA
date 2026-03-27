@@ -19,6 +19,7 @@
 	
 	let showDetailsModal = $state(false);
 	let selectedEvent = $state<any>(null);
+	let editingEventId = $state<number | null>(null);
 
 	const filiereMap: Record<number, string> = {
 		1: 'TSDI (Digital)',
@@ -61,7 +62,8 @@
 				// Convert to iso strings for inputs (YYYY-MM-DDThh:mm)
 				const startIso = new Date(info.start.getTime() - info.start.getTimezoneOffset() * 60000).toISOString().slice(0,16);
 				const endIso = new Date(info.end.getTime() - info.end.getTimezoneOffset() * 60000).toISOString().slice(0,16);
-				newEvent = { titre: '', debut: startIso, fin: endIso, all_day: info.allDay };
+				newEvent = { titre: '', debut: startIso, fin: endIso, all_day: info.allDay, repetition: 'none', fin_repetition: '', filiere: '', niveau: '' };
+				editingEventId = null;
 				showModal = true;
 			}
 		},
@@ -114,17 +116,62 @@
 				filiere: newEvent.filiere || null,
 				niveau: newEvent.niveau || null
 			};
-			const res = await api.post('/api/events/', payload);
-			if (Array.isArray(res.data)) {
-				events = [...events, ...res.data];
+			if (editingEventId) {
+				const res = await api.put(`/api/events/${editingEventId}/`, payload);
+				events = events.map(e => e.id === editingEventId ? res.data : e);
 			} else {
-				events = [...events, res.data];
+				const res = await api.post('/api/events/', payload);
+				if (Array.isArray(res.data)) {
+					events = [...events, ...res.data];
+				} else {
+					events = [...events, res.data];
+				}
 			}
 			showModal = false;
+			editingEventId = null;
 		} catch (error) {
 			console.error('Save error', error);
 			alert('Erreur de sauvegarde');
 		}
+	}
+
+	async function deleteEvent() {
+		if (!selectedEvent || !confirm("Êtes-vous sûr de vouloir supprimer cet événement ?")) return;
+		try {
+			await api.delete(`/api/events/${selectedEvent.id}/`);
+			events = events.filter((e) => e.id !== parseInt(selectedEvent.id) && String(e.id) !== String(selectedEvent.id));
+			showDetailsModal = false;
+		} catch (error) {
+			console.error('Delete error', error);
+			alert('Erreur lors de la suppression');
+		}
+	}
+
+	function editEvent() {
+		if (!selectedEvent) return;
+		const rawEvent = events.find((e) => String(e.id) === String(selectedEvent.id));
+		if (!rawEvent) return;
+
+		// format dates to input type="datetime-local" (YYYY-MM-DDTHH:mm)
+		const formatIsoDate = (dateStr: string) => {
+			if (!dateStr) return '';
+			const d = new Date(dateStr);
+			return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+		};
+
+		newEvent = {
+			titre: rawEvent.titre,
+			debut: formatIsoDate(rawEvent.debut),
+			fin: formatIsoDate(rawEvent.fin),
+			all_day: rawEvent.all_day,
+			repetition: 'none',
+			fin_repetition: '',
+			filiere: rawEvent.filiere || '',
+			niveau: rawEvent.niveau || ''
+		};
+		editingEventId = rawEvent.id;
+		showDetailsModal = false;
+		showModal = true;
 	}
 </script>
 
@@ -148,6 +195,7 @@
 					class="btn btn-primary shadow shadow-primary/30"
 					onclick={() => {
 						newEvent = { titre: '', debut: '', fin: '', all_day: false, repetition: 'none', fin_repetition: '', filiere: '', niveau: '' };
+						editingEventId = null;
 						showModal = true;
 					}}
 				>
@@ -242,7 +290,7 @@
 <!-- Modal Ajout Événement -->
 <dialog class="modal" class:modal-open={showModal}>
 	<div class="modal-box bg-base-100 text-base-content">
-		<h3 class="font-bold text-lg mb-4">Nouvel événement</h3>
+		<h3 class="font-bold text-lg mb-4">{editingEventId ? "Modifier l'événement" : "Nouvel événement"}</h3>
 		<form onsubmit={(e) => { e.preventDefault(); saveEvent(); }} class="flex flex-col gap-4">
 			<label class="form-control w-full">
 				<div class="label"><span class="label-text">Titre</span></div>
@@ -344,7 +392,13 @@
 				{/if}
 			</div>
 
-			<div class="modal-action mt-6">
+			<div class="modal-action mt-6 flex justify-between w-full">
+				<div class="flex gap-2">
+					{#if currentUser?.role === 'admin'}
+						<button class="btn btn-error btn-outline" onclick={deleteEvent}>Supprimer</button>
+						<button class="btn btn-primary" onclick={editEvent}>Modifier</button>
+					{/if}
+				</div>
 				<button class="btn" onclick={() => (showDetailsModal = false)}>Fermer</button>
 			</div>
 		{/if}
