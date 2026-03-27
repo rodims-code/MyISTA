@@ -255,13 +255,23 @@ class FeedbackReplyView(APIView):
         return Response({"message": "Réponse envoyée avec succès"})
 
 class EventListCreate(generics.ListCreateAPIView):
-    queryset = Event.objects.all()
     serializer_class = EventSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == "admin":
+            return Event.objects.all()
+            
+        from django.db.models import Q
+        return Event.objects.filter(
+            Q(filiere__nom=user.filiere, niveau__nom=user.niveau) |
+            Q(filiere__isnull=True) | Q(niveau__isnull=True)
+        )
+
     def create(self, request, *args, **kwargs):
-        if request.user.role not in ["admin", "delegate"]:
-            raise PermissionDenied("Seuls les admins et délégués peuvent créer des événements.")
+        if request.user.role != "admin":
+            raise PermissionDenied("Seul l'admin peut créer des événements.")
             
         data = request.data.copy()
         repetition = data.pop('repetition', 'none')
@@ -327,11 +337,11 @@ class EventDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
 
     def perform_update(self, serializer):
-        if self.request.user.role not in ["admin", "delegate"]:
-            raise PermissionDenied("Seuls les admins et délégués peuvent modifier des événements.")
+        if self.request.user.role != "admin":
+            raise PermissionDenied("Seul l'admin peut modifier des événements.")
         serializer.save()
 
     def perform_destroy(self, instance):
-        if self.request.user.role not in ["admin", "delegate"]:
-            raise PermissionDenied("Seuls les admins et délégués peuvent supprimer des événements.")
+        if self.request.user.role != "admin":
+            raise PermissionDenied("Seul l'admin peut supprimer des événements.")
         instance.delete()

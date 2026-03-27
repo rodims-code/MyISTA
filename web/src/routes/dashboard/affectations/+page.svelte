@@ -15,7 +15,7 @@
 
 	// Modal
 	let showModal = $state(false);
-	let newEvent = $state({ titre: '', debut: '', fin: '', all_day: false, repetition: 'none', fin_repetition: '' });
+	let newEvent = $state({ titre: '', debut: '', fin: '', all_day: false, repetition: 'none', fin_repetition: '', filiere: '', niveau: '' });
 	
 	let showDetailsModal = $state(false);
 	let selectedEvent = $state<any>(null);
@@ -54,10 +54,10 @@
             listWeek: 'Liste'
         },
         locale: 'fr',
-		selectable: currentUser?.role === 'admin' || currentUser?.role === 'delegate',
-		editable: currentUser?.role === 'admin' || currentUser?.role === 'delegate',
+		selectable: currentUser?.role === 'admin',
+		editable: currentUser?.role === 'admin',
 		select: (info: any) => {
-			if (currentUser?.role === 'admin' || currentUser?.role === 'delegate') {
+			if (currentUser?.role === 'admin') {
 				// Convert to iso strings for inputs (YYYY-MM-DDThh:mm)
 				const startIso = new Date(info.start.getTime() - info.start.getTimezoneOffset() * 60000).toISOString().slice(0,16);
 				const endIso = new Date(info.end.getTime() - info.end.getTimezoneOffset() * 60000).toISOString().slice(0,16);
@@ -110,7 +110,9 @@
 				fin: newEvent.fin,
 				all_day: newEvent.all_day,
 				repetition: newEvent.repetition,
-				fin_repetition: newEvent.fin_repetition || undefined
+				fin_repetition: newEvent.fin_repetition || undefined,
+				filiere: newEvent.filiere || null,
+				niveau: newEvent.niveau || null
 			};
 			const res = await api.post('/api/events/', payload);
 			if (Array.isArray(res.data)) {
@@ -141,11 +143,11 @@
 		</div>
 		
 		<div class="flex gap-2">
-			{#if currentUser?.role === 'admin' || currentUser?.role === 'delegate'}
+			{#if currentUser?.role === 'admin'}
 				<button
 					class="btn btn-primary shadow shadow-primary/30"
 					onclick={() => {
-						newEvent = { titre: '', debut: '', fin: '', all_day: false, repetition: 'none', fin_repetition: '' };
+						newEvent = { titre: '', debut: '', fin: '', all_day: false, repetition: 'none', fin_repetition: '', filiere: '', niveau: '' };
 						showModal = true;
 					}}
 				>
@@ -263,6 +265,27 @@
 				<span class="label-text">Toute la journée</span> 
 			</label>
 			
+			<div class="grid grid-cols-2 gap-4">
+				<label class="form-control w-full">
+					<div class="label"><span class="label-text">Filière</span></div>
+					<select class="select select-bordered" bind:value={newEvent.filiere}>
+						<option value="">Toutes (Global)</option>
+						{#each Object.values(filiereMap) as filiere}
+							<option value={filiere}>{filiere}</option>
+						{/each}
+					</select>
+				</label>
+				<label class="form-control w-full">
+					<div class="label"><span class="label-text">Niveau</span></div>
+					<select class="select select-bordered" bind:value={newEvent.niveau}>
+						<option value="">Tous</option>
+						{#each Object.values(niveauMap) as n}
+							<option value={n}>{n}</option>
+						{/each}
+					</select>
+				</label>
+			</div>
+
 			<div class="grid grid-cols-2 gap-4">
 				<label class="form-control w-full">
 					<div class="label"><span class="label-text">Répétition</span></div>

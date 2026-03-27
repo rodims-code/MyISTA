@@ -70,6 +70,19 @@ class FeedbackSerializer(serializers.ModelSerializer):
         read_only_fields = ['user', 'statut']
 
 class EventSerializer(serializers.ModelSerializer):
+    filiere = serializers.SlugRelatedField(
+        queryset=Filiere.objects.all(),
+        slug_field='nom',
+        required=False,
+        allow_null=True
+    )
+    niveau = serializers.SlugRelatedField(
+        queryset=Niveau.objects.all(),
+        slug_field='nom',
+        required=False,
+        allow_null=True
+    )
+
     class Meta:
         model = Event
         fields = '__all__'
