@@ -89,7 +89,7 @@
 	// automatiquement quand currentUser change
 	const navItems = $derived([
 		{
-			href: currentUser?.role === 'admin' ? '/dashboard/' : '/dashboard/home',
+			href: currentUser?.role === 'admin' ? '/dashboard' : '/dashboard',
 			label: currentUser?.role === 'admin' ? 'Tableau de bord' : 'Home',
 			Icon: currentUser?.role === 'admin' ? LayoutGrid : Home
 		},

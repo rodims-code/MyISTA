@@ -30,7 +30,7 @@
       if (user?.role === 'admin') {
         goto('/dashboard'); // URL pour l'admin
       } else {
-        goto('/dashboard/home'); // URL pour student/delegate
+        goto('/dashboard'); // URL pour student/delegate
       }
 
     } catch (err: any) {
