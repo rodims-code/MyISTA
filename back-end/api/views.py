@@ -224,10 +224,13 @@ class UserListView(generics.ListAPIView):
 class FeedbackListCreate(generics.ListCreateAPIView):
     queryset = feedback.objects.all()
     serializer_class = FeedbackSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        if self.request.user.is_authenticated:
+            serializer.save(user=self.request.user)
+        else:
+            serializer.save(user=None)
 
 class FeedbackDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = feedback.objects.all()

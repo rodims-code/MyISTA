@@ -17,12 +17,42 @@
 		Sparkles
 	} from 'lucide-svelte';
 	import { onMount } from 'svelte';
+	import api from '$lib/index';
 
 	// Animation simple au chargement
 	let mounted = false;
+
+	let feedbackNom = $state('');
+	let feedbackMessage = $state('');
+	let isSubmitting = $state(false);
+	let submitSuccess = $state(false);
+	let submitError = $state('');
+
 	onMount(() => {
 		mounted = true;
 	});
+
+	async function submitFeedback() {
+		if (!feedbackMessage.trim()) return;
+		isSubmitting = true;
+		submitError = '';
+		submitSuccess = false;
+		
+		try {
+			const sujet = feedbackNom.trim() ? `Feedback Public: ${feedbackNom}` : 'Feedback Anonyme';
+			await api.post('/api/feedbacks/', {
+				sujet: sujet,
+				message: feedbackMessage
+			});
+			submitSuccess = true;
+			feedbackNom = '';
+			feedbackMessage = '';
+		} catch (error) {
+			submitError = "Une erreur est survenue lors de l'envoi.";
+		} finally {
+			isSubmitting = false;
+		}
+	}
 </script>
 
 <div
@@ -110,20 +140,22 @@
 				</p>
 
 				<div class="flex flex-wrap justify-center gap-4">
-					<button
+					<a
+						href="/auth/register"
 						class="group btn px-10 shadow-xl shadow-primary/40 transition-all btn-lg btn-primary hover:-translate-y-1 hover:shadow-2xl hover:shadow-primary/70"
 					>
 						Commencer l'expérience <ArrowRight
 							size={18}
 							class="ml-2 transition-transform group-hover:translate-x-1"
 						/>
-					</button>
+					</a>
 
-					<button
+					<a
+						href="#problemes"
 						class="btn border-slate-200 px-10 btn-outline btn-lg hover:bg-slate-50 hover:text-primary"
 					>
 						Découvrir le projet
-					</button>
+					</a>
 					<a
 						href="https://github.com/rodims-code/MyISTA"
 						target="_blank"
@@ -339,12 +371,25 @@
 				<form
 					class="mx-auto max-w-xl rounded-3xl border border-white/10 bg-white/5 p-8 text-left shadow-2xl shadow-primary/20 backdrop-blur-xl transition-all hover:shadow-primary/30"
 				>
+					{#if submitSuccess}
+						<div class="alert alert-success mb-6 rounded-2xl border-none shadow-[0_0_15px_rgba(34,197,94,0.3)] bg-success/20 text-success-content backdrop-blur-sm">
+							<span class="font-medium text-white">Merci pour votre message ! Nous l'avons bien reçu.</span>
+						</div>
+					{/if}
+					
+					{#if submitError}
+						<div class="alert alert-error mb-6 rounded-2xl border-none shadow-[0_0_15px_rgba(239,68,68,0.3)] bg-error/20 text-error-content backdrop-blur-sm">
+							<span class="font-medium text-white">{submitError}</span>
+						</div>
+					{/if}
+
 					<div class="form-control mb-4">
 						<label class="label"
 							><span class="label-text text-slate-300">Nom complet (Optionnel)</span></label
 						>
 						<input
 							type="text"
+							bind:value={feedbackNom}
 							placeholder="Comment vous appelez-vous ?"
 							class="input-bordered input w-full border-white/10 bg-white/5 text-white shadow-[0_0_15px_rgba(59,130,246,0.1)] transition-all placeholder:text-slate-500 focus:border-primary focus:ring-1 focus:ring-primary"
 						/>
@@ -353,18 +398,25 @@
 						<label class="label"><span class="label-text text-slate-300">Votre message</span></label
 						>
 						<textarea
+							bind:value={feedbackMessage}
 							class="textarea-bordered textarea h-32 w-full border-white/10 bg-white/5 text-white shadow-[0_0_15px_rgba(59,130,246,0.1)] transition-all placeholder:text-slate-500 focus:border-primary focus:ring-1 focus:ring-primary"
 							placeholder="Écrivez votre encouragement ou feedback ici..."
 						></textarea>
 					</div>
 					<button
 						type="button"
-						class="group btn w-full shadow-lg shadow-primary/30 transition-all btn-primary hover:-translate-y-1 hover:shadow-primary/60"
+						onclick={submitFeedback}
+						disabled={isSubmitting || !feedbackMessage.trim()}
+						class="group btn w-full shadow-lg shadow-primary/30 transition-all btn-primary hover:-translate-y-1 hover:shadow-primary/60 disabled:bg-primary/50 disabled:text-white/50"
 					>
-						<Send
-							size={18}
-							class="mr-2 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"
-						/>
+						{#if isSubmitting}
+							<span class="loading loading-spinner loading-xs mr-2"></span>
+						{:else}
+							<Send
+								size={18}
+								class="mr-2 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"
+							/>
+						{/if}
 						Envoyer le message
 					</button>
 				</form>

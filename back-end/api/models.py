@@ -270,7 +270,9 @@ class feedback(models.Model):
 
     user = models.ForeignKey(
         User,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
     )
     sujet = models.CharField(max_length=200, default="Feedback")
     message = models.TextField()
