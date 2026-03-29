@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { DoorOpen, Search, Loader2 } from 'lucide-svelte';
+	import { DoorOpen, Search, Loader2, Building2, X } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import api from '$lib/index';
 	import { ACCESS_TOKEN } from '$lib/constants';
@@ -9,6 +9,13 @@
 	let batiments = $state<any[]>([]);
 	let loading = $state(true);
 	let search = $state('');
+	let selectedSalle = $state<any>(null);
+	let modalElement = $state<HTMLDialogElement | null>(null);
+
+	function openModal(salle: any) {
+		selectedSalle = salle;
+		modalElement?.showModal();
+	}
 
 	onMount(async () => {
 		try {
@@ -78,7 +85,7 @@
 								<span class="badge badge-ghost badge-sm">{getBatimentNom(salle.batiment)}</span>
 							</td>
 							<td class="text-right">
-								<button class="btn btn-ghost btn-xs">Détails</button>
+								<button class="btn btn-ghost btn-xs" onclick={() => openModal(salle)}>Détails</button>
 							</td>
 						</tr>
 					{:else}
@@ -94,3 +101,48 @@
 		</table>
 	</div>
 </div>
+
+<!-- Modal Détails Salle -->
+<dialog bind:this={modalElement} class="modal modal-bottom sm:modal-middle">
+	<div class="modal-box">
+		<form method="dialog">
+			<button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"><X size={16} /></button>
+		</form>
+		{#if selectedSalle}
+			<div class="flex items-center gap-3 mb-6">
+				<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+					<DoorOpen size={24} class="text-primary" />
+				</div>
+				<div>
+					<h3 class="font-bold text-xl text-base-content">{selectedSalle.nom}</h3>
+					<p class="text-sm text-base-content/50">Détails de la salle</p>
+				</div>
+			</div>
+
+			<div class="space-y-3">
+				<div class="flex items-center gap-3 p-3 rounded-lg bg-base-200/60">
+					<DoorOpen size={18} class="text-primary shrink-0" />
+					<div>
+						<p class="text-xs text-base-content/50 uppercase tracking-wide">Nom de la salle</p>
+						<p class="font-bold font-mono text-base-content">{selectedSalle.nom}</p>
+					</div>
+				</div>
+				<div class="flex items-center gap-3 p-3 rounded-lg bg-base-200/60">
+					<Building2 size={18} class="text-secondary shrink-0" />
+					<div>
+						<p class="text-xs text-base-content/50 uppercase tracking-wide">Bâtiment</p>
+						<p class="font-semibold text-base-content">{getBatimentNom(selectedSalle.batiment)}</p>
+					</div>
+				</div>
+			</div>
+		{/if}
+		<div class="modal-action">
+			<form method="dialog">
+				<button class="btn">Fermer</button>
+			</form>
+		</div>
+	</div>
+	<form method="dialog" class="modal-backdrop">
+		<button>close</button>
+	</form>
+</dialog>
