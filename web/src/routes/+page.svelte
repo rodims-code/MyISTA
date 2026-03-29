@@ -14,7 +14,11 @@
 		Github,
 		MessageSquare,
 		Send,
-		Sparkles
+		Sparkles,
+		Linkedin,
+		User,
+		Globe,
+		Mail
 	} from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import api from '$lib/index';
@@ -340,6 +344,34 @@
 									l’institut.
 								</p>
 							</div>
+
+							<!-- Section Contact Profil Pro -->
+							<div class="mt-10 pt-8 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-6">
+								<div class="flex items-stretch gap-4 rounded-xl bg-slate-50 p-2 pr-6 border border-slate-100 shadow-sm transition-all hover:shadow-md">
+									<div class="h-[72px] w-[72px] shrink-0 rounded-lg overflow-hidden bg-[#111] shadow-inner flex items-center justify-center">
+										<img src="src/public/rodims-code.png" alt="Logo RODIMS-CODE" class="h-full w-full object-cover" />
+									</div>
+									<div class="flex flex-col justify-center py-1">
+										<h5 class="font-extrabold text-slate-900 text-lg leading-none mb-1">RODIM'S Dieuveil</h5>
+										<p class="text-[10px] sm:text-xs font-black tracking-widest text-[#0077b5] uppercase mb-1.5">RODIMS-CODE</p>
+										<p class="text-xs font-semibold text-slate-500">Concepteur & Développeur Full-Stack</p>
+									</div>
+								</div>
+								<div class="flex gap-3">
+									<a href="https://www.linkedin.com/in/dieuveil-rodim-s-777a5b354/" target="_blank" rel="noopener noreferrer" class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition-all hover:-translate-y-1 hover:border-[#0A66C2] hover:bg-[#0A66C2] hover:text-white hover:shadow-lg hover:shadow-[#0A66C2]/30" title="LinkedIn">
+										<Linkedin size={18} />
+									</a>
+									<a href="https://github.com/rodims-code" target="_blank" rel="noopener noreferrer" class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition-all hover:-translate-y-1 hover:border-slate-900 hover:bg-slate-900 hover:text-white hover:shadow-lg hover:shadow-slate-900/30" title="GitHub">
+										<Github size={18} />
+									</a>
+									<a href="https://rodims.dev" target="_blank" rel="noopener noreferrer" class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition-all hover:-translate-y-1 hover:border-primary hover:bg-primary hover:text-white hover:shadow-lg hover:shadow-primary/30" title="Portfolio">
+										<Globe size={18} />
+									</a>
+									<a href="ridrodims@gmail.com" class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition-all hover:-translate-y-1 hover:border-red-500 hover:bg-red-500 hover:text-white hover:shadow-lg hover:shadow-red-500/30" title="Email">
+										<Mail size={18} />
+									</a>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -458,7 +490,7 @@
 			<div
 				class="mx-auto mt-12 flex max-w-6xl flex-col items-center justify-between gap-4 border-t border-slate-200 pt-8 text-sm text-slate-400 md:flex-row"
 			>
-				<p>© 2026 MyISTA. Conçu et développé avec passion pour l'ISTA.</p>
+				<p>© 2026 MyISTA. Conçu et développé avec passion par <a href="https://github.com/rodims-code" target="_blank" class="font-bold text-primary transition-colors hover:text-blue-600">Rodims</a> pour l'ISTA.</p>
 				<div class="flex gap-6 italic">
 					<span>Solution locale & évolutive</span>
 				</div>
