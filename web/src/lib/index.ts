@@ -2,7 +2,7 @@
 import axios from "axios";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "./constants";
 // 1. On utilise l'import officiel de SvelteKit pour les variables d'env
-import { PUBLIC_API_URL } from '$env/static/public'; 
+import { PUBLIC_API_URL } from '$env/static/public';
 import { browser } from '$app/environment';
 import { goto } from '$app/navigation';
 
