@@ -2,7 +2,7 @@
   import { goto } from '$app/navigation';
   import api from '$lib/index';
   import { ACCESS_TOKEN, REFRESH_TOKEN } from '$lib/constants';
-  import { GraduationCap, User, Lock, AlertCircle, Loader2 } from 'lucide-svelte';
+  import { GraduationCap, User, Lock, AlertCircle, Loader2, Home } from 'lucide-svelte';
 	import { fetchCurrentUser } from '$lib/userApi';
 
   let matricule = $state('');
@@ -61,6 +61,11 @@
   </div>
 
   <div class="relative z-10 w-full max-w-md">
+    <!-- Bouton retour accueil -->
+    <a href="/" class="btn btn-ghost btn-sm mb-4 gap-2 text-base-content/60 hover:text-base-content">
+      <Home size={16} />
+      Retour à l'accueil
+    </a>
     <!-- Logo -->
     <div class="text-center mb-8">
       <div class="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-2xl shadow-lg shadow-primary/30 mb-4">

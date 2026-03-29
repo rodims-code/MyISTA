@@ -9,7 +9,8 @@
 		Briefcase,
 		Layers,
 		AlertCircle,
-		Loader2
+		Loader2,
+		Home
 	} from 'lucide-svelte';
 
 	let matricule = $state('');
@@ -83,6 +84,11 @@
 	</div>
 
 	<div class="relative z-10 w-full max-w-xl">
+		<!-- Bouton retour accueil -->
+		<a href="/" class="btn btn-ghost btn-sm mb-4 gap-2 text-base-content/60 hover:text-base-content">
+			<Home size={16} />
+			Retour à l'accueil
+		</a>
 		<!-- Logo -->
 		<div class="mb-8 text-center">
 			<div
