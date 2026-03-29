@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Info, Calendar, Tag, ChevronRight, Loader2 } from 'lucide-svelte';
+	import { Info, Calendar, Tag, ChevronRight, Loader2, Filter, AlertTriangle, Pin } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import api from '$lib/index';
 	import { fetchCurrentUser } from '$lib/userApi';
@@ -13,6 +13,30 @@
 	let showEditModal = $state(false);
 	let editingInfoId = $state<number | null>(null);
 	let newInfo = $state({ titre: '', contenu: '', categorie: '' });
+
+	let activeFilter = $state('Toutes');
+	let availableFilters = $derived(['Toutes', ...Array.from(new Set(infos.map(i => i.categorie?.trim()).filter(Boolean)))]);
+	
+	let displayedInfos = $derived(
+		[...infos]
+			.filter(i => {
+				if (activeFilter === 'Toutes') return true;
+				const cat = i.categorie?.trim() || '';
+				return cat === activeFilter;
+			})
+			.sort((a, b) => {
+				const aUrgent = (a.categorie || '').toLowerCase().includes('urgent');
+				const bUrgent = (b.categorie || '').toLowerCase().includes('urgent');
+				
+				if (activeFilter === 'Toutes') {
+					if (aUrgent && !bUrgent) return -1;
+					if (!aUrgent && bUrgent) return 1;
+				}
+				const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+				const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+				return dateB - dateA;
+			})
+	);
 
 	function openModal(info: any) {
 		selectedInfo = info;
@@ -101,6 +125,29 @@
 		{/if}
 	</div>
 
+	<!-- Filters -->
+	{#if !loading && infos.length > 0}
+		<div class="flex flex-wrap items-center gap-2 py-1">
+			<div class="flex items-center gap-2 mr-2 text-sm font-medium text-base-content/60">
+				<Filter size={16} />
+				Filtres:
+			</div>
+			{#each availableFilters as filter}
+				<button
+					class="btn btn-sm rounded-full transition-all {activeFilter === filter 
+						? (filter.toLowerCase().includes('urgent') ? 'btn-warning border-warning text-warning-content' : 'btn-primary border-primary text-primary-content') 
+						: 'btn-ghost bg-base-200 hover:bg-base-300'}"
+					onclick={() => activeFilter = filter}
+				>
+					{#if filter.toLowerCase().includes('urgent')}
+						<AlertTriangle size={14} class={activeFilter === filter ? '' : 'text-warning'} />
+					{/if}
+					{filter}
+				</button>
+			{/each}
+		</div>
+	{/if}
+
 	{#if loading}
 		<div class="flex flex-col items-center justify-center gap-4 py-20">
 			<Loader2 size={40} class="animate-spin text-primary/40" />
@@ -108,7 +155,7 @@
 		</div>
 	{:else}
 		<div class="grid grid-cols-1 gap-6">
-			{#each infos as info}
+			{#each displayedInfos as info}
 				{@const isUrgent = info.categorie && info.categorie.toLowerCase().includes('urgent')}
 				<div
 					class="group card overflow-hidden border {isUrgent ? 'border-warning bg-warning/5' : 'border-base-200 bg-base-100'} shadow-sm transition-all hover:shadow-md"
@@ -139,8 +186,11 @@
 							</div>
 
 							<h3
-								class="mb-3 text-xl font-bold text-base-content transition-colors group-hover:text-primary"
+								class="mb-3 text-xl font-bold text-base-content transition-colors group-hover:text-primary flex items-center gap-2"
 							>
+								{#if isUrgent && activeFilter === 'Toutes'}
+									<Pin size={18} class="text-warning fill-warning/20 transform rotate-45 shrink-0" />
+								{/if}
 								{info.titre}
 							</h3>
 
