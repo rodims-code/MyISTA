@@ -23,6 +23,11 @@
 	import { onMount } from 'svelte';
 	import api from '$lib/index';
 
+  	import logoRodim from '$lib/assets/rodims-code.png';
+  	import apercuImage from '$lib/assets/Screenshot (44).png';
+
+
+
 	// Animation simple au chargement
 	let mounted = false;
 
@@ -186,7 +191,7 @@
 							<p class="font-mono text-sm tracking-widest uppercase">Dashboard Aperçu</p> -->
 							<!-- svelte-ignore a11y_img_redundant_alt -->
 							<img
-								src="src/public/Screenshot (44).png"
+								src={apercuImage}
 								alt="Image not found"
 								class="h-full w-[95%] rounded-xl"
 							/>
@@ -349,7 +354,7 @@
 							<div class="mt-10 pt-8 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-6">
 								<div class="flex items-stretch gap-4 rounded-xl bg-slate-50 p-2 pr-6 border border-slate-100 shadow-sm transition-all hover:shadow-md">
 									<div class="h-[72px] w-[72px] shrink-0 rounded-lg overflow-hidden bg-[#111] shadow-inner flex items-center justify-center">
-										<img src="src/public/rodims-code.png" alt="Logo RODIMS-CODE" class="h-full w-full object-cover" />
+										<img src={logoRodim} alt="Logo RODIMS-CODE" class="h-full w-full object-cover" />
 									</div>
 									<div class="flex flex-col justify-center py-1">
 										<h5 class="font-extrabold text-slate-900 text-lg leading-none mb-1">RODIM'S Dieuveil</h5>
