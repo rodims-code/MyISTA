@@ -351,10 +351,12 @@ class EventDetail(generics.RetrieveUpdateDestroyAPIView):
 
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
+from django.views.decorators.csrf import csrf_exempt
 import json
 
 User = get_user_model()
 
+@csrf_exempt
 def create_superuser(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST only"}, status=405)
