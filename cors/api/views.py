@@ -366,13 +366,11 @@ def create_superuser(request):
 
     data = json.loads(request.body)
 
-    username = data.get("username")
-    email = data.get("email")
+    matricule = data.get("matricule")
     password = data.get("password")
 
     User.objects.create_superuser(
-        username=username,
-        email=email,
+        matricule=matricule,
         password=password
     )
 
