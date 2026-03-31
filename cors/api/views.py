@@ -348,32 +348,3 @@ class EventDetail(generics.RetrieveUpdateDestroyAPIView):
         if self.request.user.role != "admin":
             raise PermissionDenied("Seul l'admin peut supprimer des événements.")
         instance.delete()
-
-from django.http import JsonResponse
-from django.contrib.auth import get_user_model
-from django.views.decorators.csrf import csrf_exempt
-import json
-
-User = get_user_model()
-
-@csrf_exempt
-def create_superuser(request):
-    if request.method != "POST":
-        return JsonResponse({"error": "POST only"}, status=405)
-
-    if User.objects.filter(is_superuser=True).exists():
-        return JsonResponse({"message": "Superuser already exists"})
-
-    data = json.loads(request.body)
-
-    username = data.get("username")
-    matricule = data.get("matricule")
-    password = data.get("password")
-
-    User.objects.create_superuser(
-        username=username,
-        matricule=matricule,
-        password=password
-    )
-
-    return JsonResponse({"message": "Superuser created"})

@@ -23,5 +23,4 @@ urlpatterns = [
     path("feedbacks/<int:pk>/reply/", views.FeedbackReplyView.as_view(), name="feedback-reply"),
     path("events/", views.EventListCreate.as_view(), name="event-list"),
     path("events/<int:pk>/", views.EventDetail.as_view(), name="event-detail"),
-    path("create-superuser/", views.create_superuser),
 ]
