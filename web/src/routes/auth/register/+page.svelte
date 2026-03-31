@@ -28,7 +28,7 @@
 //		{ id: 3, nom: 'GE (Gestion)' }
 	];
 	const niveaux = [
-		{ id: 1, nom: 'Preparatoire' },
+		{ id: 1, nom: 'PREPO' },
 //		{ id: 2, nom: 'Licence 1' },
 //		{ id: 3, nom: 'Licence 2' },
 //		{ id: 4, nom: 'Licence 3' }
