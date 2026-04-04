@@ -84,7 +84,7 @@
 			<button
 				class="btn absolute top-2 right-2 btn-circle btn-ghost btn-sm"
 				onclick={close}
-				type="button">✕</button
+				type="button">❌</button
 			>
 		</form>
 		<h3 id="add-doc-modal-title" class="mb-6 flex items-center gap-2 text-lg font-bold">
@@ -122,7 +122,7 @@
 					<label class="label"><span class="label-text">Niveau</span></label>
 					<select class="select-bordered select w-full" bind:value={newDoc.niveau} required>
 						<option value="" disabled selected>Choisir le niveau</option>
-						<option value="Preparatoire">Preparatoire</option>
+						<option value="PREPO">PREPO</option>
 					</select>
 				</div>
 			</div>

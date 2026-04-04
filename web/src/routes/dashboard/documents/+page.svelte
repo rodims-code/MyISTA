@@ -60,7 +60,8 @@
 
 	async function handleDownload(doc: any) {
 		const url = getDownloadUrl(doc.fichier);
-		const filename = doc.fichier.split('/').pop() || doc.titre || 'document';
+		const cleanUrl = url.split('?')[0].split('#')[0];
+		const filename = cleanUrl.split('/').pop() || doc.titre || 'document';
 
 		try {
 			const response = await fetch(url);
@@ -87,15 +88,18 @@
 	}
 
 	function isImage(path: string) {
-		return path.match(/\.(jpeg|jpg|gif|png|webp|svg)$/i) != null;
+		const cleanPath = path.split('?')[0].split('#')[0];
+		return cleanPath.match(/\.(jpeg|jpg|gif|png|webp|svg)$/i) != null;
 	}
 
 	function isPdf(path: string) {
-		return path.match(/\.(pdf)$/i) != null;
+		const cleanPath = path.split('?')[0].split('#')[0];
+		return cleanPath.match(/\.(pdf)$/i) != null;
 	}
 
 	function isOfficeDoc(path: string) {
-		return path.match(/\.(doc|docx|ppt|pptx|xls|xlsx)$/i) != null;
+		const cleanPath = path.split('?')[0].split('#')[0];
+		return cleanPath.match(/\.(doc|docx|ppt|pptx|xls|xlsx)$/i) != null;
 	}
 
 	async function toggleFavorite(doc: any) {
@@ -231,7 +235,7 @@
 			<div class="flex justify-between items-center mb-4">
 				<h3 class="font-bold text-lg truncate pr-4">{previewDoc.titre}</h3>
 				<form method="dialog">
-					<button class="btn btn-sm btn-circle btn-ghost" onclick={() => showPreviewModal = false}>✕</button>
+					<button class="btn btn-sm btn-circle btn-ghost" onclick={() => showPreviewModal = false}>❌</button>
 				</form>
 			</div>
 			
