@@ -116,6 +116,12 @@
 		const item = bottomNavItems.find((n) => n.href === path);
 		return item?.label ?? '';
 	}
+
+	function closeSidebarOnMobile() {
+		if (window.innerWidth < 1024) {
+			sidebarOpen = false;
+		}
+	}
 </script>
 
 {#if isAuthorized === null}
@@ -260,6 +266,7 @@
 							<li>
 								<a
 									{href}
+									onclick={closeSidebarOnMobile}
 									class="flex items-center gap-3 rounded-xl font-medium
                        {$page.url.pathname === href
 										? 'bg-primary text-primary-content shadow shadow-primary/20'
@@ -285,6 +292,7 @@
 										logout();
 									} else if (item.href) {
 										goto(item.href);
+										closeSidebarOnMobile();
 									}
 								}}
 								class="flex w-full items-center gap-3 rounded-xl font-medium transition-colors
