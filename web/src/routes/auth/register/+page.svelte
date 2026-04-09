@@ -198,26 +198,7 @@
 							</label>
 						</label>
 					</div>
-
-					<!-- Password -->
-					<label class="form-control w-full">
-						<div class="label pb-1">
-							<span class="label-text font-medium">Mot de passe</span>
-						</div>
-						<label
-							class="input-bordered input flex w-full items-center gap-3 transition-colors focus-within:input-primary"
-						>
-							<Lock size={16} class="shrink-0 text-base-content/40" />
-							<input
-								type="password"
-								placeholder="••••••••"
-								class="min-w-0 grow"
-								bind:value={password}
-								required
-							/>
-						</label>
-					</label>
-
+					
 					<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 						<!-- Niveau -->
 						<label class="form-control w-full">
@@ -265,6 +246,25 @@
 							</div>
 						</label>
 					</div>
+
+					<!-- Password -->
+					<label class="form-control w-full">
+						<div class="label pb-1">
+							<span class="label-text font-medium">Mot de passe</span>
+						</div>
+						<label
+							class="input-bordered input flex w-full items-center gap-3 transition-colors focus-within:input-primary"
+						>
+							<Lock size={16} class="shrink-0 text-base-content/40" />
+							<input
+								type="password"
+								placeholder="••••••••"
+								class="min-w-0 grow"
+								bind:value={password}
+								required
+							/>
+						</label>
+					</label>
 
 					<!-- Submit -->
 					<button
