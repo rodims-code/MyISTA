@@ -2,6 +2,7 @@
 	import { FilePlus, Upload, Loader2 } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import api from '$lib/index';
+	import { fetchCurrentUser } from '$lib/userApi';
 
 	let { open = $bindable(false) } = $props();
 
@@ -16,8 +17,67 @@
 		niveau: '',
 	});
 
-	let filiere = $state<any[]>([]);
-	let niveau = $state<any[]>([]);
+	let currentUser = $state<any>(null);
+
+	onMount(async () => {
+		currentUser = await fetchCurrentUser();
+	});
+
+	// Définition des filières selon les niveaux
+	let filieresPrepo = $state([
+		{ nom: 'A' },
+		{ nom: 'B' },
+		{ nom: 'C' },
+		{ nom: 'D' },
+		{ nom: 'E' },
+		{ nom: 'F' },
+		{ nom: 'G' },
+		{ nom: 'H' },
+		{ nom: 'I' },
+		{ nom: 'J' }
+	]);
+
+	let filieresLicence = $state([
+		{ nom: 'Environnement' },
+		{ nom: 'Météorologie' },
+		{ nom: 'Systèmes de Navigation aérienne' },
+		{ nom: 'Exploitation aéronautique' },
+		{ nom: 'Electricité' },
+		{ nom: 'Energies renouvelables' },
+		{ nom: 'Ingénierie Biomédicale' },
+		{ nom: 'Biotechnologie' },
+		{ nom: 'Electronique' },
+		{ nom: 'Télécommunications' },
+		{ nom: 'Mécanique' },
+		{ nom: 'Informatique' },
+		{ nom: 'Maintenance industrielle' }
+	]);
+
+	let niveaux = $state([
+		{ nom: 'PREPO' },
+		{ nom: 'LICENCE 1' },
+		{ nom: 'LICENCE 2' },
+		{ nom: 'LICENCE 3' }
+	]);
+
+	// Filières disponibles selon le niveau sélectionné (ou si c'est un délégué)
+	let availableFilieres = $derived.by(() => {
+		// Délégué ne voit que sa filière
+		if (currentUser && currentUser.role === 'delegate' && currentUser.filiere) {
+			return [{ nom: currentUser.filiere }];
+		}
+
+		if (!newDoc.niveau) return [];
+
+		if (newDoc.niveau === 'PREPO') {
+			return filieresPrepo;
+		} else if (['LICENCE 1', 'LICENCE 2', 'LICENCE 3'].includes(newDoc.niveau)) {
+			return filieresLicence;
+		}
+
+		return [];
+	});
+
 	let fileInput = $state<HTMLInputElement | null>(null);
 
 	async function loadFormOptions() {
@@ -69,7 +129,26 @@
 
 	$effect(() => {
 		if (open) {
-			// loadFormOptions();
+			if (currentUser && currentUser.role === 'delegate') {
+				newDoc.niveau = currentUser.niveau;
+				newDoc.filiere = currentUser.filiere;
+			}
+		}
+	});
+
+	// Réinitialiser la filière quand le niveau change
+	$effect(() => {
+		newDoc.niveau; // Dépendance
+		// Si ce n'est pas un délégué, on s'assure de la cohérence ou on vide
+		if (!currentUser || currentUser.role !== 'delegate') {
+			if (newDoc.filiere) {
+				const validFilieres = availableFilieres.map(f => f.nom);
+				if (!validFilieres.includes(newDoc.filiere)) {
+					newDoc.filiere = '';
+				}
+			} else {
+				newDoc.filiere = '';
+			}
 		}
 	});
 
@@ -113,16 +192,24 @@
 			<div class="grid grid-cols-2 gap-4">
 				<div class="form-control">
 					<label class="label"><span class="label-text">Filière</span></label>
-					<select class="select-bordered select w-full" bind:value={newDoc.filiere} required>
-						<option value="" disabled selected>Choisir la filliere</option>
-						<option value="G">G</option>
+					<select class="select-bordered select w-full" bind:value={newDoc.filiere} required={currentUser?.role !== 'admin'} disabled={currentUser?.role === 'delegate'}>
+						<option value="" disabled={currentUser?.role !== 'admin'} selected>
+							{currentUser?.role === 'admin' ? "Visible à tous (Aucune filière)" : "Choisir la filière"}
+						</option>
+						{#each availableFilieres as f}
+							<option value={f.nom}>{f.nom}</option>
+						{/each}
 					</select>
 				</div>
 				<div class="form-control">
 					<label class="label"><span class="label-text">Niveau</span></label>
-					<select class="select-bordered select w-full" bind:value={newDoc.niveau} required>
-						<option value="" disabled selected>Choisir le niveau</option>
-						<option value="PREPO">PREPO</option>
+					<select class="select-bordered select w-full" bind:value={newDoc.niveau} required={currentUser?.role !== 'admin'} disabled={currentUser?.role === 'delegate'}>
+						<option value="" disabled={currentUser?.role !== 'admin'} selected>
+							{currentUser?.role === 'admin' ? "Visible à tous (Aucun niveau)" : "Choisir le niveau"}
+						</option>
+						{#each niveaux as n}
+							<option value={n.nom}>{n.nom}</option>
+						{/each}
 					</select>
 				</div>
 			</div>
