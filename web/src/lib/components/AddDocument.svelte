@@ -61,7 +61,7 @@
 	]);
 
 	// Filières disponibles selon le niveau sélectionné (ou si c'est un délégué)
-	let availableFilieres = $derived(() => {
+	let availableFilieres = $derived.by(() => {
 		// Délégué ne voit que sa filière
 		if (currentUser && currentUser.role === 'delegate' && currentUser.filiere) {
 			return [{ nom: currentUser.filiere }];
@@ -138,9 +138,15 @@
 
 	// Réinitialiser la filière quand le niveau change
 	$effect(() => {
-		if (newDoc.niveau && newDoc.filiere && (!currentUser || currentUser.role !== 'delegate')) {
-			const validFilieres = availableFilieres.map(f => f.nom);
-			if (!validFilieres.includes(newDoc.filiere)) {
+		newDoc.niveau; // Dépendance
+		// Si ce n'est pas un délégué, on s'assure de la cohérence ou on vide
+		if (!currentUser || currentUser.role !== 'delegate') {
+			if (newDoc.filiere) {
+				const validFilieres = availableFilieres.map(f => f.nom);
+				if (!validFilieres.includes(newDoc.filiere)) {
+					newDoc.filiere = '';
+				}
+			} else {
 				newDoc.filiere = '';
 			}
 		}
