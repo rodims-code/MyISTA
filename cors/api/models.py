@@ -173,6 +173,9 @@ class InfosEssentielles(models.Model):
         default="approuve"
     )
 
+    filiere = models.ForeignKey(Filiere, on_delete=models.CASCADE, null=True, blank=True)
+    niveau = models.ForeignKey(Niveau, on_delete=models.CASCADE, null=True, blank=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -238,12 +241,14 @@ class Document(models.Model):
 
     filiere = models.ForeignKey(
         Filiere,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        null=True, blank=True
     )
 
     niveau = models.ForeignKey(
         Niveau,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        null=True, blank=True
     )
 
     uploader = models.ForeignKey(

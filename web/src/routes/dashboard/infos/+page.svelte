@@ -12,7 +12,37 @@
 	
 	let showEditModal = $state(false);
 	let editingInfoId = $state<number | null>(null);
-	let newInfo = $state({ titre: '', contenu: '', categorie: '' });
+	let newInfo = $state({ titre: '', contenu: '', categorie: '', filiere: '', niveau: '' });
+
+	let filieresPrepo = $state([{ nom: 'A' }, { nom: 'B' }, { nom: 'C' }, { nom: 'D' }, { nom: 'E' }, { nom: 'F' }, { nom: 'G' }, { nom: 'H' }, { nom: 'I' }, { nom: 'J' }]);
+	let filieresLicence = $state([{ nom: 'Environnement' }, { nom: 'Météorologie' }, { nom: 'Systèmes de Navigation aérienne' }, { nom: 'Exploitation aéronautique' }, { nom: 'Electricité' }, { nom: 'Energies renouvelables' }, { nom: 'Ingénierie Biomédicale' }, { nom: 'Biotechnologie' }, { nom: 'Electronique' }, { nom: 'Télécommunications' }, { nom: 'Mécanique' }, { nom: 'Informatique' }, { nom: 'Maintenance industrielle' }]);
+	let niveaux = $state([{ nom: 'PREPO' }, { nom: 'LICENCE 1' }, { nom: 'LICENCE 2' }, { nom: 'LICENCE 3' }]);
+
+	let availableFilieres = $derived(() => {
+		if (currentUser && currentUser.role === 'delegate' && currentUser.filiere) {
+			return [{ nom: currentUser.filiere }];
+		}
+		if (!newInfo.niveau) return [];
+		if (newInfo.niveau === 'PREPO') return filieresPrepo;
+		else if (['LICENCE 1', 'LICENCE 2', 'LICENCE 3'].includes(newInfo.niveau)) return filieresLicence;
+		return [];
+	});
+
+	$effect(() => {
+		if (showEditModal && (!editingInfoId) && currentUser && currentUser.role === 'delegate') {
+			newInfo.niveau = currentUser.niveau;
+			newInfo.filiere = currentUser.filiere;
+		}
+	});
+
+	$effect(() => {
+		if (newInfo.niveau && newInfo.filiere && (!currentUser || currentUser.role !== 'delegate')) {
+			const validFilieres = availableFilieres.map((f: any) => f.nom);
+			if (!validFilieres.includes(newInfo.filiere)) {
+				newInfo.filiere = '';
+			}
+		}
+	});
 
 	let activeFilter = $state('Toutes');
 	let availableFilters = $derived(['Toutes', ...Array.from(new Set(infos.map(i => i.categorie?.trim()).filter(Boolean)))]);
@@ -90,7 +120,9 @@
 		newInfo = {
 			titre: selectedInfo.titre,
 			contenu: selectedInfo.contenu,
-			categorie: selectedInfo.categorie || ''
+			categorie: selectedInfo.categorie || '',
+			filiere: selectedInfo.filiere || '',
+			niveau: selectedInfo.niveau || ''
 		};
 		editingInfoId = selectedInfo.id;
 		modalElement?.close();
@@ -115,7 +147,7 @@
 		<button 
 			class="btn btn-primary shadow shadow-primary/30"
 			onclick={() => {
-				newInfo = { titre: '', contenu: '', categorie: '' };
+				newInfo = { titre: '', contenu: '', categorie: '', filiere: '', niveau: '' };
 				editingInfoId = null;
 				showEditModal = true;
 			}}
@@ -283,6 +315,31 @@
 					<div class="label"><span class="label-text">Titre</span></div>
 					<input type="text" placeholder="Titre de l'annonce" class="input input-bordered w-full" bind:value={newInfo.titre} required />
 				</label>
+				
+				<div class="grid grid-cols-2 gap-4">
+					<div class="form-control">
+						<label class="label"><span class="label-text">Filière</span></label>
+						<select class="select-bordered select w-full" bind:value={newInfo.filiere} disabled={currentUser?.role === 'delegate'}>
+							<option value="">
+								{currentUser?.role === 'admin' ? "Visible à tous (Aucune filière)" : "Choisir la filière"}
+							</option>
+							{#each availableFilieres as f}
+								<option value={f.nom}>{f.nom}</option>
+							{/each}
+						</select>
+					</div>
+					<div class="form-control">
+						<label class="label"><span class="label-text">Niveau</span></label>
+						<select class="select-bordered select w-full" bind:value={newInfo.niveau} disabled={currentUser?.role === 'delegate'}>
+							<option value="">
+								{currentUser?.role === 'admin' ? "Visible à tous (Aucun niveau)" : "Choisir le niveau"}
+							</option>
+							{#each niveaux as n}
+								<option value={n.nom}>{n.nom}</option>
+							{/each}
+						</select>
+					</div>
+				</div>
 				
 				<label class="form-control w-full">
 					<div class="label"><span class="label-text">Catégorie</span></div>

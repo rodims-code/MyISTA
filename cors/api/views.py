@@ -73,9 +73,19 @@ class AffectationSalleDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class InfosEssentiellesListCreate(generics.ListCreateAPIView):
-    queryset = InfosEssentielles.objects.all()
     serializer_class = InfosEssentiellesSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == "admin":
+            return InfosEssentielles.objects.all()
+        else:
+            from django.db.models import Q
+            return InfosEssentielles.objects.filter(
+                Q(niveau__nom=user.niveau, filiere__nom=user.filiere) |
+                Q(niveau__isnull=True) | Q(filiere__isnull=True)
+            )
 
     def perform_create(self, serializer):
         statut = "approuve" if self.request.user.role == "admin" else "en_attente"
@@ -114,9 +124,10 @@ class DocumentListCreate(generics.ListCreateAPIView):
         if self.request.user.role == "admin" :
             return Document.objects.all()
         else :
+            from django.db.models import Q
             return Document.objects.filter(
-                niveau__nom=user.niveau,
-                filiere__nom=user.filiere
+                Q(niveau__nom=user.niveau, filiere__nom=user.filiere) |
+                Q(niveau__isnull=True) | Q(filiere__isnull=True)
             )
 
     def perform_create(self, serializer):

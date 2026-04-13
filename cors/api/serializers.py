@@ -35,6 +35,19 @@ class AffectationSalleSerializer(serializers.ModelSerializer):
 
 
 class InfosEssentiellesSerializer(serializers.ModelSerializer):
+    filiere = serializers.SlugRelatedField(
+        queryset=Filiere.objects.all(),
+        slug_field='nom',
+        required=False,
+        allow_null=True
+    )
+    niveau = serializers.SlugRelatedField(
+        queryset=Niveau.objects.all(),
+        slug_field='nom',
+        required=False,
+        allow_null=True
+    )
+
     class Meta:
         model = InfosEssentielles
         fields = '__all__'
@@ -43,11 +56,15 @@ class InfosEssentiellesSerializer(serializers.ModelSerializer):
 class DocumentSerializer(serializers.ModelSerializer):
     filiere = serializers.SlugRelatedField(
         queryset=Filiere.objects.all(),
-        slug_field='nom'
+        slug_field='nom',
+        required=False,
+        allow_null=True
     )
     niveau = serializers.SlugRelatedField(
         queryset=Niveau.objects.all(),
-        slug_field='nom'
+        slug_field='nom',
+        required=False,
+        allow_null=True
     )
 
     class Meta:

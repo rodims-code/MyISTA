@@ -11,7 +11,46 @@
 	let newInfo = $state({
 		titre: '',
 		contenu: '',
-		categorie: ''
+		categorie: '',
+		filiere: '',
+		niveau: ''
+	});
+
+	let currentUser = $state<any>(null);
+
+	import { onMount } from 'svelte';
+	import { fetchCurrentUser } from '$lib/userApi';
+
+	onMount(async () => {
+		currentUser = await fetchCurrentUser();
+	});
+
+	let filieresPrepo = $state([{ nom: 'A' }, { nom: 'B' }, { nom: 'C' }, { nom: 'D' }, { nom: 'E' }, { nom: 'F' }, { nom: 'G' }, { nom: 'H' }, { nom: 'I' }, { nom: 'J' }]);
+	let filieresLicence = $state([{ nom: 'Environnement' }, { nom: 'Météorologie' }, { nom: 'Systèmes de Navigation aérienne' }, { nom: 'Exploitation aéronautique' }, { nom: 'Electricité' }, { nom: 'Energies renouvelables' }, { nom: 'Ingénierie Biomédicale' }, { nom: 'Biotechnologie' }, { nom: 'Electronique' }, { nom: 'Télécommunications' }, { nom: 'Mécanique' }, { nom: 'Informatique' }, { nom: 'Maintenance industrielle' }]);
+	let niveaux = $state([{ nom: 'PREPO' }, { nom: 'LICENCE 1' }, { nom: 'LICENCE 2' }, { nom: 'LICENCE 3' }]);
+
+	let availableFilieres = $derived(() => {
+		if (currentUser && currentUser.role === 'delegate' && currentUser.filiere) return [{ nom: currentUser.filiere }];
+		if (!newInfo.niveau) return [];
+		if (newInfo.niveau === 'PREPO') return filieresPrepo;
+		else if (['LICENCE 1', 'LICENCE 2', 'LICENCE 3'].includes(newInfo.niveau)) return filieresLicence;
+		return [];
+	});
+
+	$effect(() => {
+		if (open && currentUser && currentUser.role === 'delegate') {
+			newInfo.niveau = currentUser.niveau;
+			newInfo.filiere = currentUser.filiere;
+		}
+	});
+
+	$effect(() => {
+		if (newInfo.niveau && newInfo.filiere && (!currentUser || currentUser.role !== 'delegate')) {
+			const validFilieres = availableFilieres.map((f: any) => f.nom);
+			if (!validFilieres.includes(newInfo.filiere)) {
+				newInfo.filiere = '';
+			}
+		}
 	});
 
 	async function handleSubmit(e: Event) {
@@ -26,7 +65,7 @@
 			setTimeout(() => {
 				close();
 				successMsg = '';
-				newInfo = { titre: '', contenu: '', categorie: '' };
+				newInfo = { titre: '', contenu: '', categorie: '', filiere: '', niveau: '' };
 			}, 2000);
 		} catch (error) {
 			console.error("Erreur d'ajout information:", error);
@@ -83,6 +122,31 @@
 					<option value="Scolarité">Scolarité</option>
 					<option value="Autre">Autre</option>
 				</select>
+			</div>
+
+			<div class="grid grid-cols-2 gap-4">
+				<div class="form-control">
+					<label class="label"><span class="label-text">Filière</span></label>
+					<select class="select-bordered select w-full" bind:value={newInfo.filiere} disabled={currentUser?.role === 'delegate'}>
+						<option value="">
+							{currentUser?.role === 'admin' ? "Visible à tous (Aucune filière)" : "Choisir la filière"}
+						</option>
+						{#each availableFilieres as f}
+							<option value={f.nom}>{f.nom}</option>
+						{/each}
+					</select>
+				</div>
+				<div class="form-control">
+					<label class="label"><span class="label-text">Niveau</span></label>
+					<select class="select-bordered select w-full" bind:value={newInfo.niveau} disabled={currentUser?.role === 'delegate'}>
+						<option value="">
+							{currentUser?.role === 'admin' ? "Visible à tous (Aucun niveau)" : "Choisir le niveau"}
+						</option>
+						{#each niveaux as n}
+							<option value={n.nom}>{n.nom}</option>
+						{/each}
+					</select>
+				</div>
 			</div>
 
 			<div class="form-control grid">
