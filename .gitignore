@@ -7,11 +7,11 @@
 .idea/
 
 # Fichiers uploadés par les utilisateurs (backend Django)
-back-end/media/
-back-end/media/*
+cors/media/
+cors/media/*
 
 # Base de données locale
-back-end/db.sqlite3
+cors/db.sqlite3
 
 # Fichiers mis en cache Python
 __pycache__/
