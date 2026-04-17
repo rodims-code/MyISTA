@@ -16,10 +16,13 @@ import dj_database_url
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Load environment variables from a .env file located at the base of the backend directory (cors folder)
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
@@ -28,18 +31,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-fm^&r1f_79io(@6g+$jma^du95h0nr7y!!fj^+=a&ek2@mvv@r'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Enable DEBUG based on environment for safer production handling, fallback to True locally
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ["myista.onrender.com"]
+ALLOWED_HOSTS = ["myista.onrender.com", "localhost", "127.0.0.1"]
 
-#CLOUDINARY
-
+# CLOUDINARY
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.environ.get("CLOUD_NAME"),
     'API_KEY': os.environ.get("API_KEY"),
     'API_SECRET': os.environ.get("API_SECRET"),
 }
-
 
 # Application definition
 
@@ -136,7 +138,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL')
+        default=os.environ.get('DATABASE_URL', f"sqlite:///{BASE_DIR / 'db.sqlite3'}")
     )
 }
 
@@ -182,13 +184,21 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-#MEDIA_URL = '/media/'
-#MEDIA_ROOT = BASE_DIR / 'media'
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+MEDIA_URL = '/media/'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.RawMediaCloudinaryStorage'
+
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.RawMediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 CORS_ALLOWED_ORIGINS = [
     "https://my-ista-seven.vercel.app",
-    "http://localhost:5174",
+    "http://localhost:5173",
     "http://127.0.0.1:5173",
 ]
 

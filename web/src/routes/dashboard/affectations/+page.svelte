@@ -217,14 +217,16 @@
 
 	<div class="flex flex-col xl:flex-row gap-6 items-start">
 		<!-- CALENDAR -->
-		<div class="card flex-[2] w-full border border-base-200 bg-base-100 p-4 shadow-sm min-w-0">
+		<div class="card flex-[2] w-full border border-base-200 bg-base-100 p-4 shadow-sm min-w-0 overflow-x-auto">
 			{#if loading}
 				<div class="flex items-center gap-2 text-base-content/50 py-10 justify-center">
 					<span class="loading loading-spinner loading-md"></span>
 					Chargement du calendrier...
 				</div>
 			{:else}
-				<Calendar {plugins} {options} />
+				<div class="min-w-[700px] w-full">
+					<Calendar {plugins} {options} />
+				</div>
 			{/if}
 		</div>
 

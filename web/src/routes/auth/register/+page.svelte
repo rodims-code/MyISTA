@@ -22,17 +22,52 @@
 	let error = $state('');
 
 	// Filieres and Niveaux placeholders (since there are no GET endpoints yet)
-	const filieres = [
-		{ id: 1, nom: 'G' },
-//		{ id: 2, nom: 'TCE (Commerce)' },
-//		{ id: 3, nom: 'GE (Gestion)' }
+	const filieresPrepo = [
+		{ id: 1, nom: 'A' },
+		{ id: 2, nom: 'B' },
+		{ id: 3, nom: 'C' },
+		{ id: 4, nom: 'D' },
+		{ id: 5, nom: 'E' },
+		{ id: 6, nom: 'F' },
+		{ id: 7, nom: 'G' },
+		{ id: 8, nom: 'H' },
+		{ id: 9, nom: 'I' },
+		{ id: 10, nom: 'J' }
 	];
+
+	const filieresLicence = [
+		{ id: 1, nom: 'Environnement' },
+		{ id: 2, nom: 'Météorologie' },
+		{ id: 3, nom: 'Systèmes de Navigation aérienne' },
+		{ id: 4, nom: 'Exploitation aéronautique' },
+		{ id: 5, nom: 'Electricité' },
+		{ id: 6, nom: 'Energies renouvelables' },
+		{ id: 7, nom: 'Ingénierie Biomédicale' },
+		{ id: 8, nom: 'Biotechnologie' },
+		{ id: 9, nom: 'Electronique' },
+		{ id: 10, nom: 'Télécommunications' },
+		{ id: 11, nom: 'Mécanique' },
+		{ id: 12, nom: 'Informatique' },
+		{ id: 13, nom: 'Maintenance industrielle' }
+	];
+
 	const niveaux = [
 		{ id: 1, nom: 'PREPO' },
-//		{ id: 2, nom: 'Licence 1' },
-//		{ id: 3, nom: 'Licence 2' },
-//		{ id: 4, nom: 'Licence 3' }
+		{ id: 2, nom: 'LICENCE 1' },
+		{ id: 3, nom: 'LICENCE 2' },
+		{ id: 4, nom: 'LICENCE 3' }
 	];
+
+	// Filières dynamiques basées sur le niveau
+	const filieres = $derived(
+		niveau === 'PREPO' ? filieresPrepo : filieresLicence
+	);
+
+	// Réinitialiser la filière quand le niveau change
+	$effect(() => {
+		niveau; // Dependency
+		filiere = null;
+	});
 
 	async function handleRegister(e: SubmitEvent) {
 		e.preventDefault();
@@ -85,7 +120,10 @@
 
 	<div class="relative z-10 w-full max-w-xl">
 		<!-- Bouton retour accueil -->
-		<a href="/" class="btn btn-ghost btn-sm mb-4 gap-2 text-base-content/60 hover:text-base-content">
+		<a
+			href="/"
+			class="btn mb-4 gap-2 text-base-content/60 btn-ghost btn-sm hover:text-base-content"
+		>
 			<Home size={16} />
 			Retour à l'accueil
 		</a>
@@ -160,50 +198,8 @@
 							</label>
 						</label>
 					</div>
-
-					<!-- Password -->
-					<label class="form-control w-full">
-						<div class="label pb-1">
-							<span class="label-text font-medium">Mot de passe</span>
-						</div>
-						<label
-							class="input-bordered input flex w-full items-center gap-3 transition-colors focus-within:input-primary"
-						>
-							<Lock size={16} class="shrink-0 text-base-content/40" />
-							<input
-								type="password"
-								placeholder="••••••••"
-								class="min-w-0 grow"
-								bind:value={password}
-								required
-							/>
-						</label>
-					</label>
-
+					
 					<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-						<!-- Filiere -->
-						<label class="form-control w-full">
-							<div class="label pb-1">
-								<span class="label-text font-medium">Filière</span>
-							</div>
-							<div class="relative">
-								<select
-									class="select-bordered select w-full pl-10 focus:select-primary"
-									bind:value={filiere}
-									required
-								>
-									<option value={null} disabled selected>Choisir une filière</option>
-									{#each filieres as f}
-										<option value={f.nom}>{f.nom}</option>
-									{/each}
-								</select>
-								<Briefcase
-									size={16}
-									class="absolute top-1/2 left-3 -translate-y-1/2 text-base-content/40"
-								/>
-							</div>
-						</label>
-
 						<!-- Niveau -->
 						<label class="form-control w-full">
 							<div class="label pb-1">
@@ -226,7 +222,49 @@
 								/>
 							</div>
 						</label>
+
+						<!-- Filiere -->
+						<label class="form-control w-full">
+							<div class="label pb-1">
+								<span class="label-text font-medium">Filière</span>
+							</div>
+							<div class="relative">
+								<select
+									class="select-bordered select w-full pl-10 focus:select-primary"
+									bind:value={filiere}
+									required
+								>
+									<option value={null} disabled selected>Choisir une filière</option>
+									{#each filieres as f}
+										<option value={f.nom}>{f.nom}</option>
+									{/each}
+								</select>
+								<Briefcase
+									size={16}
+									class="absolute top-1/2 left-3 -translate-y-1/2 text-base-content/40"
+								/>
+							</div>
+						</label>
 					</div>
+
+					<!-- Password -->
+					<label class="form-control w-full">
+						<div class="label pb-1">
+							<span class="label-text font-medium">Mot de passe</span>
+						</div>
+						<label
+							class="input-bordered input flex w-full items-center gap-3 transition-colors focus-within:input-primary"
+						>
+							<Lock size={16} class="shrink-0 text-base-content/40" />
+							<input
+								type="password"
+								placeholder="••••••••"
+								class="min-w-0 grow"
+								bind:value={password}
+								required
+							/>
+						</label>
+					</label>
 
 					<!-- Submit -->
 					<button
