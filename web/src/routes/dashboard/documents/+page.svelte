@@ -162,7 +162,7 @@
 							</span>
 							{#if doc.categorie === 'TP' && doc.deadline}
 								<span class="text-xs font-bold text-error bg-error/10 px-1.5 py-0.5 rounded shadow-sm flex items-center gap-1">
-									⏰ Deadline: {new Date(doc.deadline).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit', year:'numeric'})}
+									⏰ à remettre le : {new Date(doc.deadline).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit', year:'numeric'})}
 								</span>
 							{/if}
 							{#if currentUser && currentUser.role !== 'student'}
