@@ -230,6 +230,11 @@ class Document(models.Model):
         ("approuve", "Approuvé"),
         ("en_attente", "En attente"),
     )
+    CATEGORIE_CHOICES = (
+        ("Cours", "Cours"),
+        ("TP", "TP"),
+        ("Autre", "Autre")
+    )
 
     titre = models.CharField(max_length=200)
 
@@ -237,7 +242,15 @@ class Document(models.Model):
         upload_to="documents/"
     )
 
-    cours = models.CharField(max_length=100)
+    cours = models.CharField(max_length=100, blank=True, null=True)
+
+    categorie = models.CharField(
+        max_length=50,
+        choices=CATEGORIE_CHOICES,
+        default="Cours"
+    )
+
+    deadline = models.DateTimeField(null=True, blank=True)
 
     filiere = models.ForeignKey(
         Filiere,

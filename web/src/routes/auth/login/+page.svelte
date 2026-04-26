@@ -105,7 +105,7 @@
               <User size={16} class="text-base-content/40 shrink-0" />
               <input
                 type="text"
-                placeholder="0000/2443"
+                placeholder="00/00001234"
                 class="grow min-w-0"
                 bind:value={matricule}
                 required

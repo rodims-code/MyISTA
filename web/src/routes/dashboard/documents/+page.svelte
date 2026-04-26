@@ -156,10 +156,15 @@
 					<div class="min-w-0 flex-1">
 						<p class="truncate text-sm font-semibold text-base-content">{doc.titre}</p>
 						<div class="mt-1 flex flex-wrap items-center gap-2">
-							<span class="badge badge-ghost badge-xs">{doc.cours}</span>
+							<span class="badge badge-ghost badge-xs uppercase font-medium">{doc.categorie || doc.cours || 'DOCUMENT'}</span>
 							<span class="text-xs text-base-content/40">
 								{new Date(doc.date_upload).toLocaleDateString()}
 							</span>
+							{#if doc.categorie === 'TP' && doc.deadline}
+								<span class="text-xs font-bold text-error bg-error/10 px-1.5 py-0.5 rounded shadow-sm flex items-center gap-1">
+									⏰ Deadline: {new Date(doc.deadline).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit', year:'numeric'})}
+								</span>
+							{/if}
 							{#if currentUser && currentUser.role !== 'student'}
 								<span class="badge badge-xs {doc.statut === 'approuve' ? 'badge-success badge-outline' : 'badge-warning badge-outline'}">
 									{doc.statut === 'approuve' ? 'Approuvé' : 'En attente'}

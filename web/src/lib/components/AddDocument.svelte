@@ -12,7 +12,8 @@
 
 	let newDoc = $state({
 		titre: '',
-		cours: '',
+		categorie: 'Cours',
+		deadline: '',
 		filiere: '',
 		niveau: '',
 	});
@@ -103,7 +104,11 @@
 
 		const formData = new FormData();
 		formData.append('titre', newDoc.titre);
-		formData.append('cours', newDoc.cours);
+		// On n'envoie plus 'cours' car il est maintenant optionnel et fusionné dans le titre
+		formData.append('categorie', newDoc.categorie);
+		if (newDoc.categorie === 'TP' && newDoc.deadline) {
+			formData.append('deadline', newDoc.deadline);
+		}
 		// FIXME: il faudrait ajouter filiere_id et niveau_id
 		formData.append('filiere', newDoc.filiere);
 		formData.append('niveau', newDoc.niveau);
@@ -180,16 +185,46 @@
 
 		<form onsubmit={handleSubmit} class="flex flex-col gap-4">
 			<div class="form-control grid">
-				<label class="label"><span class="label-text">Titre du document</span></label>
+				<label class="label"><span class="label-text">Titre du document (ex: Maths - TP 1)</span></label>
 				<input type="text" class="input-bordered input w-full" bind:value={newDoc.titre} required />
 			</div>
 
-			<div class="form-control grid">
-				<label class="label"><span class="label-text">Matière / Cours</span></label>
-				<input type="text" class="input-bordered input w-full" bind:value={newDoc.cours} required />
+			<div class="grid grid-cols-2 gap-4">
+				<div class="form-control">
+					<label class="label"><span class="label-text">Catégorie</span></label>
+					<select class="select-bordered select w-full" bind:value={newDoc.categorie} required>
+						<option value="Cours">Cours</option>
+						<option value="TP">Travail Pratique (TP)</option>
+						<option value="Autre">Autre</option>
+					</select>
+				</div>
+				{#if newDoc.categorie === 'TP'}
+				<div class="form-control">
+					<label class="label">
+						<span class="label-text text-error font-bold">Date de remise (Deadline)</span>
+					</label>
+					<input type="datetime-local" class="input-bordered input input-error focus:input-error w-full text-error" bind:value={newDoc.deadline} required />
+					<label class="label">
+						<span class="label-text-alt text-error opacity-80">La date limite est obligatoire pour les TPs.</span>
+					</label>
+				</div>
+				{/if}
 			</div>
 
 			<div class="grid grid-cols-2 gap-4">
+			
+				<div class="form-control">
+					<label class="label"><span class="label-text">Niveau</span></label>
+					<select class="select-bordered select w-full" bind:value={newDoc.niveau} required={currentUser?.role !== 'admin'} disabled={currentUser?.role === 'delegate'}>
+						<option value="" disabled={currentUser?.role !== 'admin'} selected>
+							{currentUser?.role === 'admin' ? "Visible à tous (Aucun niveau)" : "Choisir le niveau"}
+						</option>
+						{#each niveaux as n}
+							<option value={n.nom}>{n.nom}</option>
+						{/each}
+					</select>
+				</div>			
+
 				<div class="form-control">
 					<label class="label"><span class="label-text">Filière</span></label>
 					<select class="select-bordered select w-full" bind:value={newDoc.filiere} required={currentUser?.role !== 'admin'} disabled={currentUser?.role === 'delegate'}>
@@ -201,17 +236,7 @@
 						{/each}
 					</select>
 				</div>
-				<div class="form-control">
-					<label class="label"><span class="label-text">Niveau</span></label>
-					<select class="select-bordered select w-full" bind:value={newDoc.niveau} required={currentUser?.role !== 'admin'} disabled={currentUser?.role === 'delegate'}>
-						<option value="" disabled={currentUser?.role !== 'admin'} selected>
-							{currentUser?.role === 'admin' ? "Visible à tous (Aucun niveau)" : "Choisir le niveau"}
-						</option>
-						{#each niveaux as n}
-							<option value={n.nom}>{n.nom}</option>
-						{/each}
-					</select>
-				</div>
+				
 			</div>
 
 			<div class="form-control">
