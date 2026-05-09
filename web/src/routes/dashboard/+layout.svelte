@@ -21,7 +21,9 @@
 		Info,
 		CalendarCheck,
 		LifeBuoy,
-		Home
+		Home,
+		UserCircle,
+		Rss
 	} from 'lucide-svelte';
 	import logoIstaIcon from '$lib/assets/myIstaIcon.png'
 	let { children } = $props();
@@ -89,7 +91,7 @@
 	// automatiquement quand currentUser change
 	const navItems = $derived([
 		{
-			href: currentUser?.role === 'admin' ? '/dashboard' : '/dashboard',
+			href: currentUser?.role === 'admin' ? '/dashboard' : '/dashboard/home',
 			label: currentUser?.role === 'admin' ? 'Tableau de bord' : 'Home',
 			Icon: currentUser?.role === 'admin' ? LayoutGrid : Home
 		},
