@@ -23,7 +23,7 @@
 		LifeBuoy,
 		Home
 	} from 'lucide-svelte';
-
+	import logoIstaIcon from '$lib/assets/myIstaIcon.png'
 	let { children } = $props();
 	// Auth guard
 	let isAuthorized = $state<boolean | null>(null);
@@ -249,9 +249,9 @@
 							: 'w-full justify-center'}"
 					>
 						<div
-							class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-primary shadow shadow-primary/30"
+							class="flex h-full w-full shrink-0 items-center justify-center rounded-xl bg-primary shadow shadow-primary/30"
 						>
-							<GraduationCap size={18} class="text-primary-content" />
+							<img src={logoIstaIcon} alt="MyISTA Icon" class="h-full w-full" />
 						</div>
 						{#if sidebarOpen}
 							<span class="text-lg font-bold tracking-tight whitespace-nowrap text-base-content">
