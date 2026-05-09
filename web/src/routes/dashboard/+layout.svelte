@@ -95,7 +95,6 @@
 			label: currentUser?.role === 'admin' ? 'Tableau de bord' : 'Home',
 			Icon: currentUser?.role === 'admin' ? LayoutGrid : Home
 		},
-		{ href: '/dashboard/feed', label: 'Actualités', Icon: Rss },
 		{ href: '/dashboard/carte', label: 'Carte du campus', Icon: Map },
 		{ href: '/dashboard/salles', label: 'Salles', Icon: DoorOpen },
 		{ href: '/dashboard/affectations', label: 'Affectations', Icon: CalendarCheck },
