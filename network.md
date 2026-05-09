@@ -33,14 +33,14 @@ Créer une plateforme **sociale + académique** inspirée d’Instagram, où les
 
 # 🏗️ ARCHITECTURE BACKEND
 
-## Apps principales
+## App principale network
 
 ```
-api/              # User + logique existante
-posts/            # réseau social
-messaging/        # chat
-notifications/    # notifications
-documents/        # fichiers académiques (déjà existant)
+# User + logique existante
+# réseau social
+# chat
+# notifications
+# fichiers académiques (déjà existant)
 ```
 
 ---

@@ -21,7 +21,9 @@
 		Info,
 		CalendarCheck,
 		LifeBuoy,
-		Home
+		Home,
+		UserCircle,
+		Rss
 	} from 'lucide-svelte';
 
 	let { children } = $props();
@@ -93,6 +95,8 @@
 			label: currentUser?.role === 'admin' ? 'Tableau de bord' : 'Home',
 			Icon: currentUser?.role === 'admin' ? LayoutGrid : Home
 		},
+		{ href: '/dashboard/feed', label: 'Actualités', Icon: Rss },
+		{ href: currentUser ? `/dashboard/profile/${currentUser.id}` : '#', label: 'Mon Profil', Icon: UserCircle },
 		{ href: '/dashboard/carte', label: 'Carte du campus', Icon: Map },
 		{ href: '/dashboard/salles', label: 'Salles', Icon: DoorOpen },
 		{ href: '/dashboard/affectations', label: 'Affectations', Icon: CalendarCheck },
