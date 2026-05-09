@@ -2,7 +2,7 @@
 
 ## 🎯 Vision
 
-Créer une plateforme **sociale + académique** inspirée d’Instagram, où les étudiants peuvent :
+Créer une plateforme **sociale + académique** inspirée d'Instagram, où les étudiants peuvent :
 
 * partager du contenu
 * échanger
@@ -51,89 +51,127 @@ Créer une plateforme **sociale + académique** inspirée d’Instagram, où les
 * Favoris
 * Rôle (student, admin…)
 
-### ➕ Follow (à ajouter)
+---
+
+# 🌐 NETWORK APP (une seule app ⭐)
+
+Structure :
+
+```
+network/
+├── models.py          # All models
+├── views.py           # All viewsets
+├── serializers.py     # All serializers
+├── urls.py            # Routing
+├── permissions.py     # Custom permissions
+├── services/
+│   └── recommendation.py  # Algorithm logic
+└── tests/
+```
+
+---
+
+## 📸 MODELS
+
+### ➕ Follow
 
 ```python
 class Follow(models.Model):
     follower = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='following', on_delete=models.CASCADE)
     following = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='followers', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('follower', 'following')
+```
+
+### Post
+
+```python
+class Post(models.Model):
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='posts')
+    content = models.TextField()
+    image = models.ImageField(upload_to='posts/', null=True, blank=True)
+    file = models.FileField(upload_to='posts/', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+```
+
+### Comment
+
+```python
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+```
+
+### Like
+
+```python
+class Like(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes')
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('user', 'post')
+```
+
+### Conversation (Messaging)
+
+```python
+class Conversation(models.Model):
+    participants = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='conversations')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+```
+
+### Message
+
+```python
+class Message(models.Model):
+    conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE, related_name='messages')
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    content = models.TextField()
+    file = models.FileField(upload_to='messages/', null=True, blank=True)
+    seen = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+```
+
+### Notification
+
+```python
+class Notification(models.Model):
+    TYPES = [
+        ('like', 'Like'),
+        ('comment', 'Comment'),
+        ('follow', 'Follow'),
+        ('message', 'Message'),
+    ]
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notifications')
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    type = models.CharField(max_length=20, choices=TYPES)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 ```
 
 ---
 
-# 📸 POSTS (app: posts)
-
-## Models
-
-### Post
-
-* author (User)
-* content (text)
-* image (optionnel)
-* fichier (PDF, doc…)
-* created_at
-
-### Comment
-
-* post
-* author
-* content
-* created_at
-
-### Like
-
-* user
-* post
-
----
-
-# 💬 MESSAGING (app: messaging)
-
-## Models
-
-### Conversation
-
-* participants (ManyToMany User)
-* created_at
-
-### Message
-
-* conversation
-* sender
-* content
-* file (optionnel)
-* seen (bool)
-* created_at
-
----
-
-# 🔔 NOTIFICATIONS (app: notifications)
-
-## Model
-
-### Notification
-
-* user (receveur)
-* sender
-* type (like, comment, follow, message)
-* is_read
-* created_at
-
----
-
-# 🧠 ALGORITHME (pas une app ❗)
+# 🧠 ALGORITHME (service dans network)
 
 Créer un service :
 
 ```
-posts/services/recommendation.py
+network/services/recommendation.py
 ```
 
 ## Logique simple (MVP)
 
 * posts récents
-* * boost si :
-
+* boost si :
   - même filière
   - beaucoup de likes
   - interaction fréquente
@@ -212,7 +250,6 @@ posts/services/recommendation.py
 * Poster des documents
 * Télécharger des cours
 * Filtrer :
-
   * filière
   * niveau
   * cours
@@ -266,14 +303,15 @@ src/
 
 ## COURT TERME
 
-* créer app posts
+* créer app network
 * implémenter feed
 * ajouter follow
+* models Post, Comment, Like, Follow
 
 ## MOYEN TERME
 
-* messaging
-* notifications
+* messaging (Conversation, Message)
+* notifications (Notification)
 
 ## LONG TERME
 
@@ -295,7 +333,7 @@ Fais :
 
 ---
 
-# 🧠 RÈGLE D’OR
+# 🧠 RÈGLE D'OR
 
 👉 Familiarité + utilité = succès
 

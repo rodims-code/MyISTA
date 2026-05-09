@@ -13,6 +13,9 @@
 		Home
 	} from 'lucide-svelte';
 
+	import logoIstaIcon from '$lib/assets/myIstaIcon.png'
+
+
 	let matricule = $state('');
 	let username = $state('');
 	let password = $state('');
@@ -130,9 +133,9 @@
 		<!-- Logo -->
 		<div class="mb-8 text-center">
 			<div
-				class="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary shadow-lg shadow-primary/30"
+				class="mb-4 inline-flex h-40 w-40 items-center justify-center rounded-2xl bg-primary shadow-lg shadow-primary/30"
 			>
-				<GraduationCap size={36} class="text-primary-content" />
+				<img src={logoIstaIcon} alt="Logo ISTA" class="h-35 w-35 object-cover" />
 			</div>
 			<h1 class="text-3xl font-extrabold tracking-tight text-base-content">
 				My<span class="text-primary">ISTA</span>

@@ -25,6 +25,8 @@
 
   	import logoRodim from '$lib/assets/rodims-code.png';
   	import apercuImage from '$lib/assets/Screenshot (44).png';
+	import logoIsta from '$lib/assets/myIsta.png';
+	import logoIstaIcon from '$lib/assets/myIstaIcon.png'
 
 
 
@@ -85,9 +87,9 @@
 		<div class="navbar-start">
 			<div class="group flex cursor-pointer items-center gap-2">
 				<div
-					class="rounded-xl bg-primary p-2 text-primary-content shadow-lg shadow-primary/20 transition-transform group-hover:scale-110"
+					class="h-10 w-10 overflow-hidden rounded-xl bg-primary text-primary-content shadow-lg shadow-primary/20 transition-transform group-hover:scale-110"
 				>
-					<GraduationCap size={24} />
+					<img src={logoIstaIcon} alt="Logo ISTA" class="h-full w-full object-cover" />
 				</div>
 				<span class="text-xl font-bold tracking-tight text-slate-800"
 					>My<span class="text-primary">ISTA</span></span
@@ -142,6 +144,10 @@
 						>intelligente et évolutive.</span
 					>
 				</h1>
+
+				<div class="flex justify-center">
+					<img src={logoIsta} alt="Logo ISTA" class="h-100 w-100 object-cover" />
+				</div>
 
 				<p class="mx-auto mb-12 max-w-2xl text-lg leading-relaxed text-slate-600 md:text-xl">
 					MyISTA est un projet open source qui centralise l'écosystème de l'institut pour offrir aux
@@ -313,7 +319,7 @@
 						<div
 							class="flex flex-col items-center justify-center bg-primary p-12 text-center text-primary-content md:w-1/3"
 						>
-							<GraduationCap size={64} class="mb-4 opacity-50" />
+							<img src={logoIstaIcon} alt="Logo ISTA" class="h-42 w-42 object-cover" />
 							<h4 class="text-2xl leading-tight font-bold tracking-tight italic">
 								Le Message du Développeur
 							</h4>
@@ -465,7 +471,7 @@
 				<div class="col-span-1 md:col-span-2">
 					<div class="mb-6 flex items-center gap-2">
 						<div class="rounded-lg bg-primary p-1.5 text-white">
-							<GraduationCap size={20} />
+							<img src={logoIstaIcon} alt="Logo ISTA" class="h-15 w-15 object-cover" />
 						</div>
 						<span class="text-xl font-bold tracking-tight">MyISTA</span>
 					</div>
