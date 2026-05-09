@@ -2,8 +2,12 @@
   import { goto } from '$app/navigation';
   import api from '$lib/index';
   import { ACCESS_TOKEN, REFRESH_TOKEN } from '$lib/constants';
-  import { GraduationCap, User, Lock, AlertCircle, Loader2, Home } from 'lucide-svelte';
+  import { User, Lock, AlertCircle, Loader2, Home } from 'lucide-svelte';
 	import { fetchCurrentUser } from '$lib/userApi';
+
+
+	import logoIstaIcon from '$lib/assets/myIstaIcon.png'
+
 
   let matricule = $state('');
   let password = $state('');
@@ -68,8 +72,8 @@
     </a>
     <!-- Logo -->
     <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-2xl shadow-lg shadow-primary/30 mb-4">
-        <GraduationCap size={36} class="text-primary-content" />
+      <div class="inline-flex items-center justify-center w-40 h-40 bg-primary rounded-2xl shadow-lg shadow-primary/30 mb-4">
+        <img src={logoIstaIcon} alt="Logo ISTA" class="h-35 w-35 object-cover" />
       </div>
       <h1 class="text-3xl font-extrabold tracking-tight text-base-content">
         My<span class="text-primary">ISTA</span>
