@@ -21,7 +21,9 @@
 		Info,
 		CalendarCheck,
 		LifeBuoy,
-		Home
+		Home,
+		UserCircle,
+		Rss
 	} from 'lucide-svelte';
 
 	let { children } = $props();

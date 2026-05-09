@@ -1,74 +1,110 @@
 <script lang="ts">
-	import { Sparkles, Clock3, ArrowRight, Instagram } from 'lucide-svelte';
+  import { onMount } from 'svelte';
+  import { fetchPosts, createPost, likePost, createComment } from '$lib/networkApi';
+  import PostCard from '$lib/components/network/PostCard.svelte';
+  import CreatePostModal from '$lib/components/network/CreatePostModal.svelte';
+  import { goto } from '$app/navigation';
+
+  let posts: any[] = [];
+  let isLoading = true;
+
+  onMount(async () => {
+    await loadPosts();
+  });
+
+  async function loadPosts() {
+    isLoading = true;
+    posts = await fetchPosts();
+    isLoading = false;
+  }
+
+  async function handleCreatePost(event: CustomEvent) {
+    try {
+      const newPost = await createPost(event.detail);
+      posts = [newPost, ...posts];
+    } catch (error) {
+      console.error(error);
+      alert('Erreur lors de la création du post');
+    }
+  }
+
+  async function handleLike(event: CustomEvent) {
+    const postId = event.detail;
+    try {
+      const res = await likePost(postId);
+      
+      // Update local state
+      posts = posts.map(p => {
+        if (p.id === postId) {
+          return {
+            ...p,
+            is_liked: res.status === 'liked',
+            likes_count: res.status === 'liked' ? p.likes_count + 1 : Math.max(0, p.likes_count - 1)
+          };
+        }
+        return p;
+      });
+    } catch (error) {
+      console.error('Erreur like:', error);
+    }
+  }
+
+  async function handleComment(event: CustomEvent) {
+    const { postId, content } = event.detail;
+    try {
+      const newComment = await createComment(postId, content);
+      
+      // Update the specific post card in the UI
+      // To do this simply, we will reload posts or find a way to dispatch back to the card.
+      // But we can also let the PostCard component handle its own comments state if we pass it a ref.
+      // Easiest is to reload all posts or update the count.
+      posts = posts.map(p => {
+        if (p.id === postId) {
+          return { ...p, comments_count: p.comments_count + 1 };
+        }
+        return p;
+      });
+      // A better way would be binding to a component method, but we can't easily do that in an each block without an array of bindings.
+      // Let's just do a full reload for simplicity in this MVP, or ignore since PostCard might not need us to push the comment if we just update the count.
+      // Wait, we passed the event up. It's better to let PostCard manage its comment list.
+    } catch (error) {
+      console.error('Erreur comment:', error);
+    }
+  }
+
+  function goToProfile(event: CustomEvent) {
+    const user = event.detail;
+    goto(`/dashboard/profile/${user}`);
+  }
 </script>
 
-<svelte:head>
-	<title>Nouvelle feature bientôt disponible — MyISTA</title>
-</svelte:head>
+<div class="max-w-2xl mx-auto py-4">
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold mb-2">Fil d'actualité</h1>
+    <p class="text-base-content/60 text-sm">Découvrez ce qui se passe sur le campus.</p>
+  </div>
 
-<div class="min-h-[calc(100vh-7rem)] flex items-center justify-center px-4 py-12">
-	<div class="w-full max-w-4xl rounded-[2rem] border border-base-200/60 bg-base-100/95 p-8 shadow-2xl shadow-primary/10 backdrop-blur-xl">
-		<div class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
-			<div class="space-y-6">
-				<div class="inline-flex items-center gap-3 rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
-					<Instagram size={18} />
-					Mode Insta-campus activé
-				</div>
+  <CreatePostModal on:submit={handleCreatePost} />
 
-				<h1 class="text-4xl font-extrabold tracking-tight text-base-content sm:text-5xl">
-					Cette feature arrive bientôt, reste connecté·e ✨
-				</h1>
-
-				<p class="max-w-2xl text-base text-base-content/70 sm:text-lg">
-					On prépare un espace qui ressemble à Instagram, mais pensé pour la vibe étudiante MyISTA : partage de documents, ambiance visuelle moderne, et des surprises pour booster ton campus.
-				</p>
-
-				<div class="grid gap-4 sm:grid-cols-2">
-					<div class="rounded-3xl border border-base-200 bg-base-200/70 p-5 shadow-sm">
-						<div class="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-							<Sparkles size={20} />
-						</div>
-						<p class="font-semibold text-base-content">Design inspiré d’Instagram</p>
-						<p class="mt-2 text-sm text-base-content/60">Look fluide, couleurs douces et layout mobile friendly.</p>
-					</div>
-					<div class="rounded-3xl border border-base-200 bg-base-200/70 p-5 shadow-sm">
-						<div class="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-secondary/10 text-secondary">
-							<Clock3 size={20} />
-						</div>
-						<p class="font-semibold text-base-content">Feature déjà en route</p>
-						<p class="mt-2 text-sm text-base-content/60">On peaufine tout pour que ça arrive propre, rapide et fun.</p>
-					</div>
-				</div>
-
-				<div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-					<a href="/dashboard/documents" class="btn btn-primary gap-2">
-						<ArrowRight size={18} />
-						Découvrir les documents
-					</a>
-					<span class="text-sm text-base-content/50">
-						En attendant, explore les ressources académiques et reste à l’affût.
-					</span>
-				</div>
-			</div>
-
-			<div class="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-primary via-secondary to-accent p-8 text-white shadow-xl">
-				<div class="absolute inset-0 bg-white/10"></div>
-				<div class="relative space-y-6">
-					<div class="rounded-3xl bg-white/10 p-5 backdrop-blur-sm">
-						<p class="text-xs uppercase tracking-[0.25em] text-white/80">Nouveauté</p>
-						<h2 class="text-3xl font-bold">Feed étudiant réinventé</h2>
-					</div>
-
-					<div class="grid gap-4">
-						<div class="rounded-3xl border border-white/20 bg-white/10 p-4">
-							<p class="text-sm text-white/80">Partage tes beaux moments au seins du campus, publie tes docs, swipe entre les contenus campus, ♥ like et partage.</p>
-						</div>
-						<div class="rounded-3xl border border-white/20 bg-white/10 p-4">
-							<p class="text-sm text-white/80">Stay hype : mode stories et filtres de filière arrivent aussi bientôt.</p>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+  {#if isLoading}
+    <div class="flex justify-center py-10">
+      <span class="loading loading-spinner loading-lg text-primary"></span>
+    </div>
+  {:else if posts.length === 0}
+    <div class="text-center py-10 bg-base-200 rounded-2xl border border-base-300 border-dashed">
+      <p class="text-base-content/60">Aucun post pour le moment.</p>
+      <p class="text-sm text-base-content/40 mt-1">Soyez le premier à publier !</p>
+    </div>
+  {:else}
+    <div class="flex flex-col">
+      {#each posts as post (post.id)}
+        <PostCard 
+          {post} 
+          on:like={handleLike} 
+          on:comment={handleComment} 
+          on:userClick={goToProfile}
+        />
+      {/each}
+    </div>
+  {/if}
 </div>
