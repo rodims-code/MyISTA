@@ -5,18 +5,39 @@
 	import { ACCESS_TOKEN } from '$lib/constants';
 	import { fetchCurrentUser, updateCurrentUser } from '$lib/userApi';
 	import { theme } from '$lib/theme';
+	import { fetchPosts, likePost } from '$lib/networkApi';
+	import PostCard from '$lib/components/network/PostCard.svelte';
 
 	let userData = $state<any>({});
 	let loading = $state(true);
 	let saving = $state(false);
 	let successMsg = $state('');
 	let errorMsg = $state('');
+	
+	// Nouvelles variables pour le profil
+	let userPosts = $state<any[]>([]);
+	let followersCount = $state(0);
+	let followingCount = $state(0);
 
 	onMount(async () => {
 		try {
 			userData = await fetchCurrentUser();
 			if (!userData) {
 				errorMsg = 'Impossible de charger votre profil.';
+			} else {
+				// Charger les posts de l'utilisateur
+				const allPosts = await fetchPosts();
+				userPosts = allPosts.filter((p: any) => p.author === userData.id);
+
+				// Charger les stats de follow
+				try {
+					const resFollows = await api.get('api/network/follows/');
+					const allFollows = resFollows.data;
+					followersCount = allFollows.filter((f: any) => f.following === userData.id).length;
+					followingCount = allFollows.filter((f: any) => f.follower === userData.id).length;
+				} catch (e) {
+					console.error('Erreur chargement follows:', e);
+				}
 			}
 		} catch (err) {
 			console.error('Erreur chargement profil:', err);
@@ -39,6 +60,25 @@
 			errorMsg = 'Une erreur est survenue lors de la sauvegarde.';
 		} finally {
 			saving = false;
+		}
+	}
+
+	async function handleLike(event: CustomEvent) {
+		const postId = event.detail;
+		try {
+			const res = await likePost(postId);
+			userPosts = userPosts.map((p) => {
+				if (p.id === postId) {
+					return {
+						...p,
+						is_liked: res.status === 'liked',
+						likes_count: res.status === 'liked' ? p.likes_count + 1 : Math.max(0, p.likes_count - 1)
+					};
+				}
+				return p;
+			});
+		} catch (error) {
+			console.error('Erreur like:', error);
 		}
 	}
 </script>
@@ -235,4 +275,54 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- Section Profil & Publications (Fusion) -->
+	{#if !loading}
+		<div class="mt-6">
+			<h2 class="text-xl font-bold text-base-content mb-4">Mes Publications & Statistiques</h2>
+			
+			<div class="flex flex-col lg:flex-row gap-6">
+				<!-- Statistiques -->
+				<div class="card w-full lg:w-1/3 h-fit border border-base-200 bg-base-100 shadow-sm">
+					<div class="card-body p-6 text-center">
+						<div class="avatar mx-auto mb-4">
+							<div class="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 bg-primary text-primary-content flex items-center justify-center text-4xl font-bold">
+								<span>{userData?.username?.charAt(0).toUpperCase() || 'U'}</span>
+							</div>
+						</div>
+						<h3 class="text-lg font-bold">{userData.username}</h3>
+						<p class="text-sm text-base-content/60 mb-4">{userData.filiere || 'Étudiant'}</p>
+						
+						<div class="flex justify-center gap-6 border-t border-base-200 pt-4">
+							<div class="flex flex-col">
+								<span class="text-xl font-bold">{userPosts.length}</span>
+								<span class="text-xs text-base-content/60 uppercase tracking-wider">Posts</span>
+							</div>
+							<div class="flex flex-col">
+								<span class="text-xl font-bold">{followersCount}</span>
+								<span class="text-xs text-base-content/60 uppercase tracking-wider">Abonnés</span>
+							</div>
+							<div class="flex flex-col">
+								<span class="text-xl font-bold">{followingCount}</span>
+								<span class="text-xs text-base-content/60 uppercase tracking-wider">Abonnements</span>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Liste des publications -->
+				<div class="flex-1 flex flex-col gap-4">
+					{#if userPosts.length === 0}
+						<div class="text-center py-10 bg-base-200 rounded-2xl border border-base-300 border-dashed">
+							<p class="text-base-content/60">Vous n'avez pas encore publié de post.</p>
+						</div>
+					{:else}
+						{#each userPosts as post (post.id)}
+							<PostCard {post} on:like={handleLike} />
+						{/each}
+					{/if}
+				</div>
+			</div>
+		</div>
+	{/if}
 </div>
