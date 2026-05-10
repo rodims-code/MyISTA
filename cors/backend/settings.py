@@ -201,6 +201,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://my-ista-seven.vercel.app",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "https://myista-production.up.railway.app",
 ]
 
 from corsheaders.defaults import default_headers
