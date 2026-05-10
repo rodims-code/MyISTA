@@ -28,13 +28,13 @@ load_dotenv(os.path.join(BASE_DIR, '.env'))
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-fm^&r1f_79io(@6g+$jma^du95h0nr7y!!fj^+=a&ek2@mvv@r'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # Enable DEBUG based on environment for safer production handling, fallback to True locally
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ["*.railway.app", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["myista-production.up.railway.app", "localhost", "127.0.0.1"]
 
 # CLOUDINARY
 CLOUDINARY_STORAGE = {
