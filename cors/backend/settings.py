@@ -205,6 +205,7 @@ CORS_ALLOWED_ORIGINS = [
 
 CSRF_TRUSTED_ORIGINS = [
 "https://myista-production.up.railway.app",
+"https://my-ista-seven.vercel.app/",
 ]
 
 from corsheaders.defaults import default_headers
