@@ -34,7 +34,7 @@ SECRET_KEY = 'django-insecure-fm^&r1f_79io(@6g+$jma^du95h0nr7y!!fj^+=a&ek2@mvv@r
 # Enable DEBUG based on environment for safer production handling, fallback to True locally
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ["myista.onrender.com", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["*.railway.app", "localhost", "127.0.0.1"]
 
 # CLOUDINARY
 CLOUDINARY_STORAGE = {
