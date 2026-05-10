@@ -14,4 +14,3 @@ whitenoise
 cloudinary
 django-cloudinary-storage
 pillow
-supabase-py
