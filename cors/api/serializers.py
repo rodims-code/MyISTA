@@ -12,7 +12,10 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
+        favoris = validated_data.pop('favoris', [])
         user = User.objects.create_user(**validated_data)
+        if favoris:
+            user.favoris.set(favoris)
         return user
 
 
