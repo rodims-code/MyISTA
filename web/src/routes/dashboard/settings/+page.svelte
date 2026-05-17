@@ -152,7 +152,7 @@
 		<div class="flex flex-col lg:flex-row gap-6 items-start">
 			
 			<!-- Colonne de Gauche : Formulaires de Paramètres -->
-			<div class="w-full lg:w-1/3 flex flex-col gap-6 sticky top-6">
+			<div class="w-full lg:w-1/3 flex flex-col gap-6 lg:sticky lg:top-6">
 				
 				<!-- Carte Informations Personnelles -->
 				<div class="card bg-base-100 shadow-sm border border-base-200">
