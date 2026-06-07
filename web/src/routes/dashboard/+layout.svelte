@@ -23,9 +23,12 @@
 		LifeBuoy,
 		Home,
 		UserCircle,
-		Rss
+		Rss,
+		MessageCircle,
+		Bell,
+		Bookmark
 	} from 'lucide-svelte';
-	import logoIstaIcon from '$lib/assets/myIstaIcon.png'
+	import logoIstaIcon from '$lib/assets/myIstaIcon.png';
 	let { children } = $props();
 	// Auth guard
 	let isAuthorized = $state<boolean | null>(null);
@@ -95,6 +98,9 @@
 			label: currentUser?.role === 'admin' ? 'Tableau de bord' : 'Home',
 			Icon: currentUser?.role === 'admin' ? LayoutGrid : Home
 		},
+		{ href: '/dashboard/messages', label: 'Messages', Icon: MessageCircle },
+		{ href: '/dashboard/notifications', label: 'Notifications', Icon: Bell },
+		{ href: '/dashboard/favorites', label: 'Favoris', Icon: Bookmark },
 		{ href: '/dashboard/carte', label: 'Carte du campus', Icon: Map },
 		{ href: '/dashboard/salles', label: 'Salles', Icon: DoorOpen },
 		{ href: '/dashboard/affectations', label: 'Affectations', Icon: CalendarCheck },
@@ -148,7 +154,9 @@
 		/>
 
 		<!-- ── Page content ── -->
-		<div class="drawer-content flex h-full min-h-0 flex-col gap-4 overflow-hidden py-4 pr-4 pl-4 lg:pl-0">
+		<div
+			class="drawer-content flex h-full min-h-0 flex-col gap-4 overflow-hidden py-4 pr-4 pl-4 lg:pl-0"
+		>
 			<!-- Topbar -->
 			<header
 				class="navbar sticky top-0 z-30 shrink-0 gap-2 rounded-full border border-base-200/50 bg-base-100 px-4 shadow-sm"
