@@ -1,4 +1,5 @@
 import api from "./index"
+import { PUBLIC_API_URL } from '$env/static/public';
 import {ACCESS_TOKEN} from "./constants"
 
 export async function fetchCurrentUser() {
@@ -44,4 +45,9 @@ export async function fetchCurrentBatiments() {
       Authorization: `Bearer ${token}`,
     },
   });
+}
+
+export function getProfileImage(url?: string | null) {
+  if (!url) return null;
+  return url.startsWith('http') ? url : `${PUBLIC_API_URL}${url}`;
 }

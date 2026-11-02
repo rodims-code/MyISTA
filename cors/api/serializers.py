@@ -8,7 +8,7 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id',"matricule", "username", "password", "niveau", "filiere", "role", "date_inscription", "favoris"]
+        fields = ['id',"matricule", "username", "password", "photo_profil", "niveau", "filiere", "role", "date_inscription", "favoris"]
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
@@ -106,4 +106,4 @@ class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
         fields = '__all__'
-        read_only_fields = ['createur']
+        read_only_fields = ['createur']

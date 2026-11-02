@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import api from '$lib/index';
 	import { ACCESS_TOKEN } from '$lib/constants';
-	import { fetchCurrentUser, updateCurrentUser } from '$lib/userApi';
+	import { fetchCurrentUser, updateCurrentUser, getProfileImage } from '$lib/userApi';
 	import { theme } from '$lib/theme';
 	import { fetchPosts, likePost } from '$lib/networkApi';
 	import PostCard from '$lib/components/network/PostCard.svelte';
@@ -18,6 +18,11 @@
 	let userPosts = $state<any[]>([]);
 	let followersCount = $state(0);
 	let followingCount = $state(0);
+	let profilePhoto = $state<File | null>(null);
+
+	function handlePhotoChange(event: Event) {
+		profilePhoto = (event.currentTarget as HTMLInputElement).files?.[0] || null;
+	}
 
 	onMount(async () => {
 		try {
@@ -52,8 +57,11 @@
 		successMsg = '';
 		errorMsg = '';
 		try {
-			const { matricule, date_inscription, role, ...updateData } = userData;
-			userData = await updateCurrentUser(updateData);
+			const formData = new FormData();
+			formData.append('username', userData.username || '');
+			if (profilePhoto) formData.append('photo_profil', profilePhoto);
+			userData = await updateCurrentUser(formData);
+			profilePhoto = null;
 			successMsg = 'Profil mis à jour avec succès !';
 			setTimeout(() => (successMsg = ''), 3000);
 		} catch (err) {
@@ -101,8 +109,12 @@
 			<div class="px-6 pb-6 relative">
 				<div class="flex flex-col sm:flex-row justify-between items-start sm:items-end -mt-12 mb-4 gap-4">
 					<div class="avatar">
-						<div class="w-24 h-24 rounded-full ring-4 ring-base-100 bg-gradient-to-tr from-primary to-secondary text-primary-content flex items-center justify-center text-4xl font-bold shadow-lg">
-							<span>{userData?.username?.charAt(0).toUpperCase() || 'U'}</span>
+						<div class="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full bg-gradient-to-tr from-primary to-secondary text-4xl font-bold text-primary-content ring-4 ring-base-100 shadow-lg">
+							{#if getProfileImage(userData?.photo_profil)}
+								<img src={getProfileImage(userData.photo_profil) || ''} alt="Photo de profil" class="h-full w-full object-cover" />
+							{:else}
+								<span>{userData?.username?.charAt(0).toUpperCase() || 'U'}</span>
+							{/if}
 						</div>
 					</div>
 					
@@ -178,6 +190,11 @@
 						{/if}
 
 						<div class="space-y-4">
+							<div class="form-control">
+								<label class="label pb-1"><span class="label-text font-medium">Photo de profil</span></label>
+								<input type="file" accept="image/*" class="file-input file-input-bordered file-input-sm w-full" onchange={handlePhotoChange} />
+								<p class="mt-1 text-xs text-base-content/50">JPG, PNG ou WebP. Visible sur votre profil et vos publications.</p>
+							</div>
 							<div class="form-control">
 								<label class="label pb-1"><span class="label-text font-medium">Matricule</span></label>
 								<input type="text" class="input-bordered input input-sm w-full bg-base-200/50" value={userData.matricule} disabled />

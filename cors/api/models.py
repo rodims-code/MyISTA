@@ -70,6 +70,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     id = uuid1
     matricule = models.CharField(max_length=100, unique=True)
     username = models.CharField(max_length=100)
+    photo_profil = models.ImageField(upload_to="profiles/", blank=True, null=True)
 
     filiere = models.CharField(max_length=20, blank=True )
 

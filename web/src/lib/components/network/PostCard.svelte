@@ -3,6 +3,7 @@
 	import CommentSection from './CommentSection.svelte';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { fetchComments } from '$lib/networkApi';
+	import { getProfileImage } from '$lib/userApi';
 
 	export let post: any;
 
@@ -132,9 +133,9 @@
 							<div
 								class="flex w-10 items-center justify-center rounded-full bg-gradient-to-tr from-primary to-secondary text-primary-content shadow-md"
 							>
-								<span class="text-base font-bold"
-									>{post.author_details?.username?.charAt(0).toUpperCase() || 'U'}</span
-								>
+								{#if getProfileImage(post.author_details?.photo_profil)}
+									<img src={getProfileImage(post.author_details.photo_profil) || ''} alt="" class="h-full w-full rounded-full object-cover" />
+								{:else}<span class="text-base font-bold">{post.author_details?.username?.charAt(0).toUpperCase() || 'U'}</span>{/if}
 							</div>
 						</div>
 						<div>
@@ -214,9 +215,9 @@
 						<div
 							class="flex w-12 items-center justify-center rounded-full bg-gradient-to-tr from-primary to-secondary text-primary-content shadow-md"
 						>
-							<span class="text-xl font-bold"
-								>{post.author_details?.username?.charAt(0).toUpperCase() || 'U'}</span
-							>
+							{#if getProfileImage(post.author_details?.photo_profil)}
+								<img src={getProfileImage(post.author_details.photo_profil) || ''} alt="" class="h-full w-full rounded-full object-cover" />
+							{:else}<span class="text-xl font-bold">{post.author_details?.username?.charAt(0).toUpperCase() || 'U'}</span>{/if}
 						</div>
 					</div>
 					<div>

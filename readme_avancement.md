@@ -1,114 +1,23 @@
-export const projectReadme = `
-# MyISTA — Point d'avancement
+# MyISTA — mise à jour
 
-> Dernière mise à jour : 2 novembre 2026
+## Changements réalisés
 
-MyISTA est une plateforme web destinée aux étudiants de l'ISTA. Le projet combine les services académiques essentiels avec une expérience sociale inspirée des réseaux modernes.
+- Messages et Notifications sont maintenant accessibles depuis la barre supérieure, avec des boutons compacts.
+- La sidebar est allégée : les deux liens ont été retirés de la liste principale.
+- Le modèle utilisateur possède maintenant une photo de profil (`photo_profil`) stockée dans `profiles/`.
+- La page Paramètres permet de choisir et d'enregistrer une image de profil.
+- L'avatar est affiché avec une initiale de secours dans la navbar, le profil, les publications, les commentaires et la messagerie.
+- Les sérialiseurs Django exposent la photo pour l'utilisateur courant et les utilisateurs du réseau.
 
-## Vision
+## Fichiers principaux
 
-Centraliser dans une seule application :
+- `cors/api/models.py` et `cors/api/migrations/0012_user_photo_profil.py` : champ photo utilisateur.
+- `cors/api/serializers.py` et `cors/network/serializers.py` : exposition de la photo via l'API.
+- `web/src/routes/dashboard/+layout.svelte` : navbar et sidebar.
+- `web/src/routes/dashboard/settings/+page.svelte` : upload et aperçu du profil.
+- `web/src/lib/components/network/` : avatars des publications et commentaires.
+- `web/src/routes/dashboard/messages/+page.svelte` : avatars des conversations.
 
-- les informations et documents académiques ;
-- les salles, affectations et événements du campus ;
-- le profil et les favoris des étudiants ;
-- les publications, commentaires et interactions sociales ;
-- la messagerie et les notifications.
+## À vérifier
 
-## État actuel
-
-### Frontend — SvelteKit
-
-Le frontend est déjà structuré autour de SvelteKit, TypeScript, Tailwind CSS, daisyUI et Lucide Svelte. Il comprend :
-
-- une landing page et les écrans de connexion/inscription ;
-- un dashboard protégé avec navigation globale ;
-- les pages d'accueil, profil, carte, salles, affectations, documents, informations et feedbacks ;
-- les favoris, notifications et messages ;
-- les composants sociaux de publication, création de post et commentaires ;
-- un thème et une interface responsive orientée mobile ;
-- des services API dédiés pour l'utilisateur et le réseau.
-
-### Backend — Django
-
-Le backend utilise Django, Django REST Framework, PostgreSQL prévu pour la production et une authentification JWT. Deux domaines fonctionnels sont présents :
-
-- `api` : utilisateurs, rôles, filières, niveaux, bâtiments, salles, affectations, documents, informations essentielles, événements, feedbacks et journal d'activité ;
-- `network` : abonnements, publications, commentaires, likes, favoris, conversations, messages et notifications.
-
-Les migrations Django existent pour les fonctionnalités académiques et la phase sociale. Le modèle utilisateur prévoit les rôles étudiant, délégué et administrateur.
-
-## Fonctionnalités déjà disponibles
-
-- Authentification et routes protégées ;
-- dashboard étudiant ;
-- consultation des salles et affectations ;
-- documents académiques avec filtres métier ;
-- informations essentielles ;
-- favoris ;
-- calendrier d'événements ;
-- feedbacks ;
-- profils ;
-- publications avec image ou fichier ;
-- commentaires, likes et abonnements ;
-- conversations, messages et notifications.
-
-## Architecture du dépôt
-
-```text
-MyISTA/
-├── cors/                  # Backend Django
-│   ├── api/               # Fonctionnalités académiques et comptes
-│   ├── network/           # Fonctionnalités sociales
-│   └── backend/           # Configuration Django
-├── web/                   # Frontend SvelteKit
-│   ├── src/routes/        # Pages publiques et dashboard
-│   ├── src/lib/           # API, composants et utilitaires
-│   └── static/            # Fichiers statiques
-├── network.md             # Architecture et roadmap détaillées
-└── readme.ts             # Ce point d'avancement exploitable en TypeScript
-```
-
-## Démarrage local
-
-### Frontend
-
-```bash
-cd web
-npm install
-npm run dev
-```
-
-### Backend
-
-```bash
-cd cors
-pip install -r requirements.txt
-python manage.py migrate
-python manage.py runserver
-```
-
-## Niveau de maturité
-
-Le socle MVP académique est en place et la phase sociale est déjà intégrée au code et aux migrations. Le projet est donc au stade de prototype fonctionnel avancé : il peut continuer à évoluer vers une première version utilisable par des étudiants, mais nécessite encore une validation complète des parcours, des tests et du déploiement.
-
-## Prochaines priorités
-
-1. Vérifier tous les parcours frontend/backend avec un environnement propre ;
-2. compléter les tests API, composants et authentification ;
-3. renforcer les permissions, la validation des fichiers et la gestion des erreurs ;
-4. préparer le déploiement et la configuration PostgreSQL ;
-5. transformer le frontend en PWA avec manifest, icônes, service worker et mode d'installation mobile ;
-6. ajouter ensuite le temps réel pour la messagerie et les notifications ;
-7. développer progressivement les recommandations, groupes et suggestions d'utilisateurs.
-
-## Positionnement produit
-
-MyISTA ne doit pas être un simple clone d'Instagram. Sa valeur vient de l'association suivante :
-
-> Une interface sociale familière + des services académiques utiles au quotidien.
-
-L'objectif à long terme est de devenir un réseau social étudiant adapté aux réalités des établissements africains.
-`;
-
-export default projectReadme;
+Après récupération des changements, appliquer les migrations avec `python manage.py migrate` depuis `cors`, puis tester l'upload d'une image et son affichage sur plusieurs écrans.

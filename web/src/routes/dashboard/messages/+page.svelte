@@ -9,6 +9,7 @@
 		createConversation
 	} from '$lib/networkApi';
 	import { fetchCurrentUser } from '$lib/userApi';
+	import { getProfileImage } from '$lib/userApi';
 	import { Paperclip, Search, Send, MessageCircle, X } from 'lucide-svelte';
 
 	let currentUser: any = null;
@@ -167,7 +168,7 @@
 						>
 							<div class="placeholder avatar">
 								<div class="h-10 w-10 rounded-full bg-primary text-primary-content">
-									<span>{user.username?.charAt(0).toUpperCase() || 'U'}</span>
+								{#if getProfileImage(user.photo_profil)}<img src={getProfileImage(user.photo_profil) || ''} alt="" class="h-full w-full rounded-full object-cover" />{:else}<span>{user.username?.charAt(0).toUpperCase() || 'U'}</span>{/if}
 								</div>
 							</div>
 							<div class="min-w-0 flex-1">
@@ -206,7 +207,7 @@
 					>
 						<div class="placeholder avatar">
 							<div class="h-11 w-11 rounded-full bg-secondary text-secondary-content">
-								<span>{participant?.username?.charAt(0).toUpperCase() || 'M'}</span>
+								{#if getProfileImage(participant?.photo_profil)}<img src={getProfileImage(participant.photo_profil) || ''} alt="" class="h-full w-full rounded-full object-cover" />{:else}<span>{participant?.username?.charAt(0).toUpperCase() || 'M'}</span>{/if}
 							</div>
 						</div>
 						<div class="min-w-0 flex-1">
@@ -231,7 +232,7 @@
 			<div class="flex items-center gap-3 border-b border-base-200 p-4">
 				<div class="placeholder avatar">
 					<div class="h-11 w-11 rounded-full bg-primary text-primary-content">
-						<span>{otherParticipant?.username?.charAt(0).toUpperCase() || 'M'}</span>
+						{#if getProfileImage(otherParticipant?.photo_profil)}<img src={getProfileImage(otherParticipant.photo_profil) || ''} alt="" class="h-full w-full rounded-full object-cover" />{:else}<span>{otherParticipant?.username?.charAt(0).toUpperCase() || 'M'}</span>{/if}
 					</div>
 				</div>
 				<div>

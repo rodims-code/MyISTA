@@ -1,6 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import { Send } from 'lucide-svelte';
+  import { getProfileImage } from '$lib/userApi';
   
   export let comments: any[] = [];
   export let postId: number;
@@ -28,7 +29,9 @@
         <div class="flex gap-3">
           <div class="avatar placeholder">
             <div class="bg-neutral text-neutral-content rounded-full w-8 h-8">
-              <span class="text-xs">{comment.author_details?.username?.charAt(0).toUpperCase() || 'U'}</span>
+              {#if getProfileImage(comment.author_details?.photo_profil)}
+                <img src={getProfileImage(comment.author_details.photo_profil) || ''} alt="" class="h-full w-full rounded-full object-cover" />
+              {:else}<span class="text-xs">{comment.author_details?.username?.charAt(0).toUpperCase() || 'U'}</span>{/if}
             </div>
           </div>
           <div class="flex-1 bg-base-200 rounded-2xl px-4 py-2 text-sm">
